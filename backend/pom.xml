@@ -79,7 +79,7 @@
     </dependencies>
 
     <build>
-        <finalName>chRat-Reloaded</finalName>
+        <finalName>chrat-reloaded</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
