@@ -1,4 +1,4 @@
-package de.strassow.backend;
+package de.strassow.backend.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
