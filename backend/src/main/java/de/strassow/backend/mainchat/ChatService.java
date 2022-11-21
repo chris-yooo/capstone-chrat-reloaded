@@ -29,21 +29,28 @@ public class ChatService extends TextWebSocketHandler {
 //        System.out.println(tesst);
 
 //        MessageForMongo test = new MessageForMongo(tesst) {
-//
-//        };
-//
-//        mainChatRepository.save(tesst)
 
-//        mainChatService.addMessageToMongo(test);
-//
 
+        handleMessage(session, message);
         for (WebSocketSession s : sessions) {
             try {
                 s.sendMessage(message);
-                mainChatService.addMessageToMongo(message);
-                super.handleTextMessage(mainChatRepository.save(WebSocketSession session, TextMessage message));
-                mainChatRepository.save(s.sendMessage(message));
+//                mainChatService.addMessageToMongo(message);
+//                super.handleTextMessage(mainChatRepository.save(WebSocketSession session, TextMessage message));
+//                mainChatRepository.save(message.getPayload());
 
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public MessageForMongo handleMessage(WebSocketSession session, TextMessage message) throws Exception {
+        super.handleTextMessage(session, message);
+        for (WebSocketSession s : sessions) {
+            try {
+                s.sendMessage(message);
+                return new MessageForMongo(message.getPayload());
             } catch (Exception e) {
                 e.printStackTrace();
             }
