@@ -1,5 +1,6 @@
-package de.strassow.backend.websocket;
+package de.strassow.backend.mainchat;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -10,17 +11,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class ChatService extends TextWebSocketHandler {
 
     private final Set<WebSocketSession> sessions = new HashSet<>();
+    private final MainChatService mainChatService;
 
-    @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        super.afterConnectionEstablished(session);
-        sessions.add(session);
-
-        System.out.println("Verbindung hergestellt!");
-    }
+    private final MainChatRepository mainChatRepository;
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -28,13 +25,42 @@ public class ChatService extends TextWebSocketHandler {
 
         System.out.println("Nachricht empfangen: " + message.getPayload());
 
+//        String tesst = message.getPayload();
+//        System.out.println(tesst);
+
+//        MessageForMongo test = new MessageForMongo(tesst) {
+//
+//        };
+//
+//        mainChatRepository.save(tesst)
+
+//        mainChatService.addMessageToMongo(test);
+//
+
         for (WebSocketSession s : sessions) {
             try {
                 s.sendMessage(message);
+                mainChatService.addMessageToMongo(message);
+                super.handleTextMessage(mainChatRepository.save(WebSocketSession session, TextMessage message));
+                mainChatRepository.save(s.sendMessage(message));
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+
+//    public MessageForMongo handleMessag(MessageForMongo tesst){
+//        MessageForMongo messageForMongo = new MessageForMongo(tesst)
+//        return mainChatService.addMessageToMongo(messageForMongo);
+//    }
+
+    @Override
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        super.afterConnectionEstablished(session);
+        sessions.add(session);
+
+        System.out.println("Verbindung hergestellt!");
     }
 
     @Override
