@@ -1,5 +1,6 @@
-package de.strassow.backend.websocket;
+package de.strassow.backend.mainchat;
 
+import de.strassow.backend.mainchat.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
