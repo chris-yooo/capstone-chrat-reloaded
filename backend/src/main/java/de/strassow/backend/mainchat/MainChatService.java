@@ -13,11 +13,12 @@ public class MainChatService {
 
     private final MainChatUtils mainChatUtils;
 
-    public void addMessage(String textMessage) {
+    public MainChatMessage addMessage(String textMessage) {
         String now = mainChatUtils.addLocalDateTimeFormatted();
         String message = now + ": " + textMessage;
         MainChatMessage mainChatMessage = new MainChatMessage(message);
         mainChatRepository.save(mainChatMessage);
+        return mainChatMessage;
     }
 
     public List<MainChatMessage> getMessages() {
