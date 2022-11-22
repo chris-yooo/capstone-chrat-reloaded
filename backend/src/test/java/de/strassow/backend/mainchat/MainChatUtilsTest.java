@@ -2,22 +2,23 @@ package de.strassow.backend.mainchat;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
 
 class MainChatUtilsTest {
-    MainChatUtils mainChatUtils = mock(MainChatUtils.class);
+    MainChatUtils mainChatUtils = new MainChatUtils();
 
     @Test
-    void addLocalDateTimeFormatted() {
+    void testSomeMethod() {
         //given
-        String testDate = "22.11.2022 12:12:12";
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
         //when
-        when(mainChatUtils.addLocalDateTimeFormatted()).thenReturn(testDate);
         String actual = mainChatUtils.addLocalDateTimeFormatted();
         //then
-        verify(mainChatUtils).addLocalDateTimeFormatted();
-        assertEquals(testDate, actual);
+        assertEquals(now.format(formatter), actual);
     }
+
 }
