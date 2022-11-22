@@ -21,8 +21,6 @@ public class MainChatService {
     }
 
     public List<MainChatMessage> getMessages() {
-        List<MainChatMessage> allMessages = mainChatRepository.findAll();
-        Collections.reverse(allMessages);
-        return allMessages;
+        return mainChatRepository.findAll();
     }
 }

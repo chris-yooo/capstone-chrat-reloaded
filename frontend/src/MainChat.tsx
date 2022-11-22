@@ -1,9 +1,12 @@
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {nanoid} from "nanoid";
+import styled from "styled-components";
 
 export default function MainChat() {
 
     const connection = useRef<WebSocket>();
-    const keepWSAlive = useRef<boolean>(false);
+    const shouldKeepWSAlive = useRef<boolean>(false);
+    const [messagesList, setMessagesList] = useState<any[]>([]);
 
     useEffect(() => {
         if (!(connection &&
@@ -17,13 +20,13 @@ export default function MainChat() {
                 console.log("WebSocket connection closed");
             };
             connection.current.onmessage = (e) => {
-                console.log("WebSocket message received: " + e.data);
+                setMessagesList(messagesList => [...messagesList, e.data])
             };
         }
     }, []);
 
     const keepAlive = useCallback(() => {
-        if (keepWSAlive.current) {
+        if (shouldKeepWSAlive.current) {
             if (connection.current !== undefined &&
                 connection.current !== null &&
                 connection.current.readyState === 1) {
@@ -36,15 +39,47 @@ export default function MainChat() {
     }, []);
 
     useEffect(() => {
-        if (connection.current) {
-            keepWSAlive.current = true;
+        if (!connection.current) {
+            shouldKeepWSAlive.current = true;
             keepAlive();
         } else {
-            keepWSAlive.current = false;
+            shouldKeepWSAlive.current = false;
         }
     }, [keepAlive]);
 
+    const messages = messagesList.map((message) => {
+        return (
+            <StyledLi key={nanoid()}>
+                {message}
+            </StyledLi>
+        )
+    });
+
     return <>
-        <p style={{textAlign: "center"}}>Moin</p>
+        <StyledH2>Main-Chat</StyledH2>
+        <StyledSection>
+        <ul>
+            {messages}
+        </ul>
+        </StyledSection>
     </>;
 }
+
+const StyledH2 = styled.h2`
+  font-size: 1.3rem;
+  margin: 5px 0 20px 0;
+  padding: 5px 0 5px 10px;
+  border: 1px solid var(--color-lightgrey);
+  border-radius: 1pc;
+`
+
+const StyledLi = styled.li`
+  margin: 2px;
+  padding: 2px;
+`
+
+const StyledSection = styled.section`
+  height: 600px;
+  overflow: auto;
+  overflow-scrolling: inherit;
+`
