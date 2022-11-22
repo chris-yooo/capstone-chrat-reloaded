@@ -14,8 +14,8 @@ public class MainChatService {
     private final MainChatUtils mainChatUtils;
 
     public void addMessage(String textMessage) {
-        String now = mainChatUtils.addLocalDateTime();
-        String message = now + " " + textMessage;
+        String now = mainChatUtils.addLocalDateTimeFormatted();
+        String message = now + ": " + textMessage;
         MainChatMessage mainChatMessage = new MainChatMessage(message);
         mainChatRepository.save(mainChatMessage);
     }
