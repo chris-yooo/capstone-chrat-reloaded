@@ -16,12 +16,12 @@ public class MainChatService {
     public void addMessage(String textMessage) {
         String now = mainChatUtils.addLocalDateTime();
         String message = now + " " + textMessage;
-        ChatMessage chatMessage = new ChatMessage(message);
-        mainChatRepository.save(chatMessage);
+        MainChatMessage mainChatMessage = new MainChatMessage(message);
+        mainChatRepository.save(mainChatMessage);
     }
 
-    public List<ChatMessage> getMessages() {
-        List<ChatMessage> allMessages = mainChatRepository.findAll();
+    public List<MainChatMessage> getMessages() {
+        List<MainChatMessage> allMessages = mainChatRepository.findAll();
         Collections.reverse(allMessages);
         return allMessages;
     }

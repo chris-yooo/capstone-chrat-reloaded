@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class ChatService extends TextWebSocketHandler {
+public class WebSocketService extends TextWebSocketHandler {
 
     private final Set<WebSocketSession> sessions = new HashSet<>();
     private final MainChatService mainChatService;
@@ -37,8 +37,8 @@ public class ChatService extends TextWebSocketHandler {
         super.afterConnectionEstablished(session);
         sessions.add(session);
 
-        for (ChatMessage chatMessage : mainChatService.getMessages()) {
-            session.sendMessage(new TextMessage(chatMessage.message()));
+        for (MainChatMessage mainChatMessage : mainChatService.getMessages()) {
+            session.sendMessage(new TextMessage(mainChatMessage.message()));
         }
     }
 
