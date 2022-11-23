@@ -25,7 +25,7 @@ export default function MainChat() {
         return date.toLocaleString();
     }
 
-    const messageToSend = useCallback(() => sendMessage(message), [handleMessageSubmit, message]);
+    const messageToSend = useCallback(() => sendMessage(message), [sendMessage, message]);
 
     const connectionStatus = {
         [ReadyState.CONNECTING]: 'Connecting',
