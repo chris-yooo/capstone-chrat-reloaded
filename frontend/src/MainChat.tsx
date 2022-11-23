@@ -1,67 +1,61 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {nanoid} from "nanoid";
+import React, {useCallback, useEffect, useState} from 'react';
 import styled from "styled-components";
+import useWebSocket, {ReadyState} from 'react-use-websocket';
 
 export default function MainChat() {
 
-    const connection = useRef<WebSocket>();
-    const shouldKeepWSAlive = useRef<boolean>(false);
-    const [messagesList, setMessagesList] = useState<any[]>([]);
+    const [messageHistory, setMessageHistory] = useState<any>([]);
+    const [message, setMessage] = useState('');
+
+    const {sendMessage, lastMessage, readyState} = useWebSocket("ws://localhost:8080/api/mainchat");
 
     useEffect(() => {
-        if (!(connection &&
-            connection.current &&
-            connection.current.readyState === 1)) {
-            connection.current = new WebSocket("ws://localhost:8080/api/mainchat");
-            connection.current.onopen = () => {
-                console.log("WebSocket connection established");
-            }
-            connection.current.onclose = () => {
-                console.log("WebSocket connection closed");
-            };
-            connection.current.onmessage = (e) => {
-                setMessagesList(messagesList => [...messagesList, e.data])
-            };
+        if (lastMessage !== null) {
+            setMessageHistory((messageHistory: any) => [...messageHistory, lastMessage]);
         }
-    }, []);
+    }, [lastMessage, setMessageHistory]);
 
-    const keepAlive = useCallback(() => {
-        if (shouldKeepWSAlive.current) {
-            if (connection.current !== undefined &&
-                connection.current !== null &&
-                connection.current.readyState === 1) {
-                connection.current.send("");
-            }
-            setTimeout(() => {
-                keepAlive();
-            }, 20000);
-        }
-    }, []);
+    const handleMessageSubmit = (event: any) => {
+        event.preventDefault();
+        messageToSend();
+    }
 
-    useEffect(() => {
-        if (!connection.current) {
-            shouldKeepWSAlive.current = true;
-            keepAlive();
-        } else {
-            shouldKeepWSAlive.current = false;
-        }
-    }, [keepAlive]);
+    const putDateTime = () => {
+        const date = new Date();
+        return date.toLocaleString();
+    }
 
-    const messages = messagesList.map((message) => {
-        return (
-            <StyledLi key={nanoid()}>
-                {message}
-            </StyledLi>
-        )
-    });
+    const messageToSend = useCallback(() => sendMessage(message), [handleMessageSubmit, message]);
+
+    const connectionStatus = {
+        [ReadyState.CONNECTING]: 'Connecting',
+        [ReadyState.OPEN]: 'Open',
+        [ReadyState.CLOSING]: 'Closing',
+        [ReadyState.CLOSED]: 'Closed',
+        [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+    }[readyState];
+
+    const messages = messageHistory.map((message: { data: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; }, idx: React.Key | null | undefined) => (
+        <StyledLi key={idx}>
+            {message ? message.data : null}
+        </StyledLi>
+    ));
 
     return <>
-        <StyledH2>Main-Chat</StyledH2>
+        <StyledH2>Main-Chat <span>{connectionStatus}</span></StyledH2>
         <StyledSection>
-        <ul>
-            {messages}
-        </ul>
+            <ul>
+                {messages}
+            </ul>
         </StyledSection>
+
+        <StyledSection2>
+            <form onSubmit={handleMessageSubmit}>
+                <input type="text" disabled={readyState !== ReadyState.OPEN}
+                       onChange={(e) => setMessage(putDateTime() + ": " + e.target.value)}/>
+                <button>Send</button>
+            </form>
+        </StyledSection2>
     </>;
 }
 
@@ -80,6 +74,13 @@ const StyledLi = styled.li`
 
 const StyledSection = styled.section`
   height: 600px;
+  overflow: auto;
+  overflow-scrolling: inherit;
+`
+
+const StyledSection2 = styled.section`
+  display: flex;
+  justify-content: center;
   overflow: auto;
   overflow-scrolling: inherit;
 `

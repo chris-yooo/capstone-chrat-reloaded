@@ -11,21 +11,17 @@ import static org.mockito.Mockito.mock;
 
 class MainChatServiceTest {
 
-    MainChatUtils mainChatUtils = mock(MainChatUtils.class);
     MainChatRepository mainChatRepository = mock(MainChatRepository.class);
-    MainChatService mainChatService = new MainChatService(mainChatRepository, mainChatUtils);
+    MainChatService mainChatService = new MainChatService(mainChatRepository);
 
     @Test
     void addMessage() {
-        String messageWithoutDate = "123";
-        String date = "22.11.2022";
-        MainChatMessage messageWithDate = new MainChatMessage("22.11.2022: 123");
+        String messageToTest = "MOIN";
+        MainChatMessage messageWithDate = new MainChatMessage("MOIN");
         //when
-        when(mainChatUtils.addLocalDateTimeFormatted()).thenReturn(date);
         when(mainChatRepository.save(messageWithDate)).thenReturn(messageWithDate);
-        MainChatMessage actual = mainChatService.addMessage(messageWithoutDate);
+        MainChatMessage actual = mainChatService.addMessage(messageToTest);
         //then
-        verify(mainChatUtils).addLocalDateTimeFormatted();
         verify(mainChatRepository).save(messageWithDate);
         assertEquals(messageWithDate, actual);
     }
