@@ -11,7 +11,7 @@ class MainChatUtilsTest {
     MainChatUtils mainChatUtils = new MainChatUtils();
 
     @Test
-    void testSomeMethod() {
+    void addLocalDateTimeFormatted() {
         //given
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
@@ -20,5 +20,4 @@ class MainChatUtilsTest {
         //then
         assertEquals(now.format(formatter), actual);
     }
-
 }
