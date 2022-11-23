@@ -39,9 +39,11 @@ class ReactRoutingPathResourceResolverTest {
         var resolver = new ReactRoutingPathResourceResolver();
         var location = mock(Resource.class);
         var relativeLocation = mock(Resource.class);
+        var requestedResource = mock(Resource.class);
         var resourcePath = "index.html";
         when(location.createRelative(resourcePath)).thenReturn(relativeLocation);
         when(relativeLocation.exists()).thenReturn(false);
+        when(requestedResource.isReadable()).thenReturn(false);
 
         // WHEN
         var actual = resolver.getResource(resourcePath, location);
