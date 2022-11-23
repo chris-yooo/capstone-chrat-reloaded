@@ -20,9 +20,7 @@
         <java.version>19</java.version>
         <sonar.organization>chris-yooo</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.exclusions>**/BackendApplication*.java</sonar.exclusions>
-        <sonar.exclusions>**/WebSocketService*.java</sonar.exclusions>
-        <sonar.exclusions>**/WebSocketConfiguration*.java</sonar.exclusions>
+        <sonar.exclusions>**/BackendApplication*.java,**/WebSocketService*.java</sonar.exclusions>
     </properties>
 
     <dependencies>
