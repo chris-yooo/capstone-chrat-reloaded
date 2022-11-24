@@ -1,4 +1,4 @@
-import React, {ChangeEvent, FormEvent, useState} from 'react';
+import React, {FormEvent, useState} from 'react';
 import styled from "styled-components";
 import useWebSocket, {ReadyState} from 'react-use-websocket';
 import {nanoid} from "nanoid";
@@ -13,7 +13,6 @@ export default function MainChat() {
     const wsServiceUrl = 'ws://' + host + '/api/mainchat';
 
     const [messageHistory, setMessageHistory] = useState<string[]>([]);
-    const [messageWithOutDate, setMessageWithOutDate] = useState<string>('');
     const [message, setMessage] = useState('');
 
     const WebSocket = useWebSocket(wsServiceUrl, {
@@ -32,19 +31,7 @@ export default function MainChat() {
     const handleMessageSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         messageToSend();
-        setMessageWithOutDate('');
-    }
-
-    function handleChange(event: ChangeEvent<HTMLInputElement>) {
-        setMessageWithOutDate(event.target.value);
-        createMessage(event.target.value);
-    }
-
-    const createMessage = (inputValue: string) => {
-        const date = new Date();
-        const dateLocal = date.toLocaleString();
-        const messageWithDate = dateLocal + ": " + inputValue;
-        setMessage(messageWithDate);
+        setMessage('');
     }
 
     const messageToSend = () => WebSocket.sendMessage(message);
@@ -74,7 +61,8 @@ export default function MainChat() {
 
         <StyledSection2>
             <form onSubmit={handleMessageSubmit}>
-                <input disabled={readyState !== ReadyState.OPEN} type="text" value={messageWithOutDate} onChange={handleChange}/>
+                <input disabled={readyState !== ReadyState.OPEN} type="text" value={message}
+                       onChange={(e) => setMessage(e.target.value)}/>
                 <button>Send</button>
             </form>
         </StyledSection2>
