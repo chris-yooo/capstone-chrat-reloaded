@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {ChangeEvent, FormEvent, useState} from 'react';
 import styled from "styled-components";
 import useWebSocket, {ReadyState} from 'react-use-websocket';
 import {nanoid} from "nanoid";
@@ -12,7 +12,8 @@ export default function MainChat() {
 
     const wsServiceUrl = 'ws://' + host + '/api/mainchat';
 
-    const [messageHistory, setMessageHistory] = useState<any>([]);
+    const [messageHistory, setMessageHistory] = useState<string[]>([]);
+    const [messageWithOutDate, setMessageWithOutDate] = useState<string>('');
     const [message, setMessage] = useState('');
 
     const WebSocket = useWebSocket(wsServiceUrl, {
@@ -21,21 +22,29 @@ export default function MainChat() {
         },
         onMessage: (event) => {
             let parsed = event.data;
-            setMessageHistory((messageHistory: any) => [...messageHistory, parsed]);
+            setMessageHistory((messageHistory: string[]) => [...messageHistory, parsed]);
         },
         onClose: () => {
             console.log("Disconnected from websocket");
         },
     });
 
-    const handleMessageSubmit = (event: any) => {
+    const handleMessageSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         messageToSend();
+        setMessageWithOutDate('');
     }
 
-    const putDateTime = () => {
+    function handleChange(event: ChangeEvent<HTMLInputElement>) {
+        setMessageWithOutDate(event.target.value);
+        createMessage(event.target.value);
+    }
+
+    const createMessage = (inputValue: string) => {
         const date = new Date();
-        return date.toLocaleString();
+        const dateLocal = date.toLocaleString();
+        const messageWithDate = dateLocal + ": " + inputValue;
+        setMessage(messageWithDate);
     }
 
     const messageToSend = () => WebSocket.sendMessage(message);
@@ -65,8 +74,7 @@ export default function MainChat() {
 
         <StyledSection2>
             <form onSubmit={handleMessageSubmit}>
-                <input disabled={readyState !== ReadyState.OPEN} type="text"
-                       onChange={(e) => setMessage(putDateTime() + ": " + e.target.value)}/>
+                <input disabled={readyState !== ReadyState.OPEN} type="text" value={messageWithOutDate} onChange={handleChange}/>
                 <button>Send</button>
             </form>
         </StyledSection2>
