@@ -8,15 +8,20 @@ body {
     -moz-osx-font-smoothing: grayscale;
 
     --color-lightgrey: rgba(232, 232, 232, 1);
-    --color-black: rgba(0, 0, 0, 1);
-    --color-white: rgba(255, 255, 255, 1);
-    --color-grey: rgba(128, 128, 128, 1);
-    --color-red: rgba(255, 0, 0, 1);
+    --color-black: rgb(0, 0, 0);
+    --color-white: rgb(255, 255, 255);
+    --color-grey: rgb(128, 128, 128);
+    --color-red: rgb(255, 0, 0);
     --color-blue: rgb(0, 0, 255);
+    --color-green: rgb(0, 255, 0);
+    --color-yellow: rgb(255, 255, 0);
     --color-text: #292929;
-    --color-button-background: #adadad;
+    --color-background: #595959;
+    --color-button-background: rgba(154, 154, 154, 0.75);;
     --color-button-hover: #6082ee;
     --color-button-active: rgba(47, 96, 255, 0.48);
+
+    background-color: var(--color-background);
 }
 
 code {
