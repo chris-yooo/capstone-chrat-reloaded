@@ -19,7 +19,7 @@ export default function App() {
         return <>Bitte haben Sie einen Augenblick Geduld...</>
     }
     if (username === 'anonymousUser') {
-        return <LoginPage onLogin={fetchUsername}></LoginPage>
+        return <LoginPage fetchUsername={fetchUsername}></LoginPage>
     }
     return <LoggedInPage username={username} onLogout={fetchUsername}></LoggedInPage>
 }
