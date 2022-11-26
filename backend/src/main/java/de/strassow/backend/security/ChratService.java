@@ -3,13 +3,13 @@ package de.strassow.backend.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 public class ChratService {
 
     private final ChratRepository chratRepository;
+
+    private final ChratUserUtils chratUserUtils;
 
     ChratUser findByUsername(String username) {
         return chratRepository.findByUsername(username);
@@ -17,13 +17,13 @@ public class ChratService {
 
     public void save(ChratUserDTO chratUserDTO) {
         String passwordBcrypt = SecurityConfig
-            .passwordEncoder
-            .encode(chratUserDTO.password());
+                .passwordEncoder
+                .encode(chratUserDTO.password());
 
         ChratUser chratUser = new ChratUser(
-            UUID.randomUUID().toString(),
-            chratUserDTO.username(),
-            passwordBcrypt
+                chratUserUtils.addUUIDasString(),
+                chratUserDTO.username(),
+                passwordBcrypt
         );
 
         chratRepository.save(chratUser);
