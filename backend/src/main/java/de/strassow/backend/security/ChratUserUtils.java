@@ -6,6 +6,7 @@ import java.util.UUID;
 
 @Component
 public class ChratUserUtils {
+
     public String addUUIDasString() {
         return UUID.randomUUID().toString();
     }

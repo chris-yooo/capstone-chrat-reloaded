@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MainChatUtilsTest {
+
     MainChatUtils mainChatUtils = new MainChatUtils();
 
     @Test
