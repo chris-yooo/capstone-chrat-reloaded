@@ -1,6 +1,7 @@
 package de.strassow.backend.security;
 
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,7 +16,7 @@ public class ChratService {
         return chratRepository.findByUsername(username);
     }
 
-    public ChratUser save(ChratUserDTO chratUserDTO) {
+    public ChratUser save(@NotNull ChratUserDTO chratUserDTO) {
         String passwordBcrypt = chratUserUtils.addPasswordBcrypt(chratUserDTO.password());
 
         ChratUser chratUser = new ChratUser(
