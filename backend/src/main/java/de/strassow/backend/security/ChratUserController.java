@@ -13,6 +13,11 @@ public class ChratUserController {
 
     private final ChratService chratService;
 
+    @PostMapping
+    public void createAppUser(@RequestBody ChratUserDTO chratUserDTO) {
+        chratService.save(chratUserDTO);
+    }
+
     @GetMapping("/login")
     public String login() {
         return "OK";
@@ -29,10 +34,5 @@ public class ChratUserController {
                 .getContext()
                 .getAuthentication()
                 .getName();
-    }
-
-    @PostMapping
-    public void createAppUser(@RequestBody ChratUserDTO chratUserDTO) {
-        chratService.save(chratUserDTO);
     }
 }
