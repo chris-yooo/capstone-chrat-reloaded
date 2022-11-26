@@ -3,6 +3,9 @@ package de.strassow.backend.security;
 public record ChratUser(
         String id,
         String username,
-        String passwordBcrypt
+        String passwordBcrypt,
+        String firstName,
+        String lastName,
+        String email
 ) {
 }

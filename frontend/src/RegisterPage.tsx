@@ -112,7 +112,7 @@ export default function RegisterPage(props: Props) {
                                  id="username"
                                  value={username}
                                  onChange={(e) => setUsername(e.target.value)}
-                                 placeholder="chris_yooo!"
+                                 placeholder="chris_yooo"
                                  required/>
 
                     <StyledLabel htmlFor={"password"}>Passwort:</StyledLabel>

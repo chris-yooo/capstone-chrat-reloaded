@@ -9,4 +9,8 @@ public class ChratUserUtils {
     public String addUUIDasString() {
         return UUID.randomUUID().toString();
     }
+
+    public String addPasswordBcrypt(String password) {
+        return SecurityConfig.passwordEncoder.encode(password);
+    }
 }
