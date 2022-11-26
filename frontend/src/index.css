@@ -16,7 +16,7 @@ body {
     --color-yellow: rgb(255, 255, 0);
     --color-text: #292929;
     --color-background: #595959;
-    --color-button-background: rgba(240, 240, 240, 0.8);;
+    --color-button-background: rgba(240, 240, 240, 0.8);
     --color-button-hover: #6082ee;
     --color-button-active: rgba(47, 96, 255, 0.48);
     --color-input-shadow: rgba(0, 0, 0, 0.5);
