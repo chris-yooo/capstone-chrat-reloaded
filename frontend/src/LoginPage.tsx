@@ -1,22 +1,17 @@
 import axios from "axios";
 import React, {useState} from "react";
 import styled from "styled-components";
+import RegisterPage from "./RegisterPage";
 
 type Props = {
-    onLogin: () => void,
+    fetchUsername: () => void,
 }
+
 export default function LoginPage(props: Props) {
 
+    const [wouldLikeRegister, setWouldLikeRegister] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-
-    const register = () => {
-        axios.post("/api/chrat-users", {
-            username,
-            password
-        })
-            .then(login)
-    }
 
     const login = () => {
         axios.get("/api/chrat-users/login", {
@@ -25,9 +20,20 @@ export default function LoginPage(props: Props) {
                 password
             }
         })
-            .then(props.onLogin)
+            .then(props.fetchUsername)
     }
 
+    if (wouldLikeRegister) {
+        return <>
+            <StyledHeader>
+                <StyledH1>chRat-Reloaded</StyledH1>
+                <StyledH2>der Messenger</StyledH2>
+            </StyledHeader>
+            <StyledMain>
+                <RegisterPage wouldLikeRegister={wouldLikeRegister} fetchUsername={props.fetchUsername}></RegisterPage>
+            </StyledMain>
+        </>
+    }
     return <>
         <StyledHeader>
             <StyledH1>chRat-Reloaded</StyledH1>
@@ -43,8 +49,8 @@ export default function LoginPage(props: Props) {
                 <StyledInput type="password" id="password" onChange={event => setPassword(event.target.value)}/>
             </div>
             <StyledDivButton>
-                <button onClick={() => register()}>Registrieren</button>
-                <button onClick={() => login()}>Anmelden</button>
+                <StyledButton onClick={() => setWouldLikeRegister(true)}>Registrieren</StyledButton>
+                <StyledButton onClick={() => login()}>Anmelden</StyledButton>
             </StyledDivButton>
         </StyledMain>
     </>
@@ -68,7 +74,7 @@ const StyledMain = styled.main`
 `
 
 const StyledDivButton = styled.div`
-  width: 200px;
+  width: 305px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -106,14 +112,15 @@ const StyledInput = styled.input`
   width: 300px;
   height: 45px;
   background: var(--color-white);
-  border: 1px solid #D0D4D9;
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--color-input-border);
+  box-shadow: 0 0 40px var(--color-input-shadow);
   border-radius: 12px;
+  font-size: 1rem;
 `
 
 const StyledLabel = styled.label`
   font-family: 'Inter', sans-serif;
-  width: 85px;
+  width: 150px;
   height: 22px;
   font-style: normal;
   font-weight: 400;
@@ -121,5 +128,28 @@ const StyledLabel = styled.label`
   line-height: 22px;
   letter-spacing: -0.02em;
   color: var(--color-white);
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0 10px var(--color-input-shadow);
+`
+
+const StyledButton = styled.button`
+  margin: 3px;
+  padding: 10px;
+  width: 140px;
+  transition-duration: 0.4s;
+  background-color: var(--color-button-background);
+  color: var(--color-text);
+  border: none;
+  font-size: 1rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: var(--color-button-hover);
+  }
+
+  &:active {
+    background-color: var(--color-button-active);
+  }
 `
