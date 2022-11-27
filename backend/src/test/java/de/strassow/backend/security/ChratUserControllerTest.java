@@ -1,11 +1,11 @@
 package de.strassow.backend.security;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -18,6 +18,8 @@ class ChratUserControllerTest {
 
     @Autowired
     private MockMvc mvc;
+
+    String base64ClientCredentials = new String(Base64.encodeBase64("detlev:SuperSecret344$$".getBytes()));
 
     @DirtiesContext
     @Test
@@ -37,13 +39,7 @@ class ChratUserControllerTest {
 
     @DirtiesContext
     @Test
-//    void loginWithoutCredentials() throws Exception {
-//
-//        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/login"))
-//                .andExpect(status().isUnauthorized());
-//    }
-
-    void loginWithTestUser() throws Exception {
+    void loginWithTestUserAndExpectOK() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/api/chrat-users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -56,20 +52,15 @@ class ChratUserControllerTest {
                 .andExpect(status().isOk());
 
         mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/login")
-                        .header("Authorization", "detlev:SuperSecret344$$")
-                        .session(new MockHttpSession()))
-                .andExpect(status().isOk())
-                .andExpect(content().string("OK"));
+                        .header("Authorization", "Basic " + base64ClientCredentials)
+                        .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isOk()).andExpect(content().string("OK"));
     }
 
     @DirtiesContext
     @Test
-//    void logout() throws Exception {
-//        mvc.perform(MockMvcRequestBuilders.post("/api/chrat-users/logout"))
-//                .andExpect(status().isUnauthorized());
-//    }
-
     void loginWithTestUserAndLogout() throws Exception {
+
         mvc.perform(MockMvcRequestBuilders.post("/api/chrat-users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -82,17 +73,21 @@ class ChratUserControllerTest {
                 .andExpect(status().isOk());
 
         mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/login")
-                        .header("Authorization", "detlev:SuperSecret344$$")
-                        .session(new MockHttpSession()))
-                .andExpect(status().isOk())
-                .andExpect(content().string("ok"));
+                        .header("Authorization", "Basic " + base64ClientCredentials)
+                        .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isOk()).andExpect(content().string("OK"));
 
-        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/logout"));
+        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/logout")
+                        .header("Authorization", "Basic " + base64ClientCredentials)
+                        .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isOk());
+//        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/me")).andExpect(status().isUnauthorized());
     }
 
     @DirtiesContext
     @Test
     void createUserAndCheckLoginMe() throws Exception {
+
         mvc.perform(MockMvcRequestBuilders.post("/api/chrat-users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -105,8 +100,8 @@ class ChratUserControllerTest {
                 .andExpect(status().isOk());
 
         mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/me")
-                        .header("Authorization", "detlev:SuperSecret344$$")
-                        .session(new MockHttpSession()))
-                .andExpect(status().isOk());
+                        .header("Authorization", "Basic " + base64ClientCredentials)
+                        .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isOk()).andExpect(content().string("detlev"));
     }
 }
