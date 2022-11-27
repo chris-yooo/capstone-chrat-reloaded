@@ -40,7 +40,7 @@ public class SecurityConfig {
                         "/api/chrat-users/login",
                         "/api/chrat-users/logout"
                 ).authenticated()
-                .anyRequest().denyAll()
+                .anyRequest().permitAll()
                 .and().build();
     }
 
