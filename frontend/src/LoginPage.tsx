@@ -30,7 +30,7 @@ export default function LoginPage(props: Props) {
                 <StyledH2>der Messenger</StyledH2>
             </StyledHeader>
             <StyledMain>
-                <RegisterPage wouldLikeRegister={wouldLikeRegister} fetchUsername={props.fetchUsername}></RegisterPage>
+                <RegisterPage wouldLikeRegister={setWouldLikeRegister} fetchUsername={props.fetchUsername}></RegisterPage>
             </StyledMain>
         </>
     }

@@ -1,13 +1,12 @@
 import React, {useState} from 'react';
 import axios from "axios";
 import PasswordChecklist from "react-password-checklist"
-import {useNavigate} from "react-router-dom";
 import styled from "styled-components";
 import {Icon} from '@iconify/react';
 
 type Props = {
     fetchUsername: () => void,
-    wouldLikeRegister: boolean,
+    wouldLikeRegister: (value: boolean) => void,
 }
 
 export default function RegisterPage(props: Props) {
@@ -38,8 +37,8 @@ export default function RegisterPage(props: Props) {
                     setMessageStatus(username + " erfolreich registriert.");
                 }
             })
-            .then(() => setTimeout(() => setBackHome(), 2000))
-            .then(login)
+            .then(() => setTimeout(() => closeRegisterSite(), 2000))
+            .then(() => setTimeout(() => login(), 2001))
     }
 
     const login = () => {
@@ -52,10 +51,8 @@ export default function RegisterPage(props: Props) {
             .then(props.fetchUsername)
     }
 
-    const navigate = useNavigate();
-
-    const setBackHome = () => {
-        navigate("/")
+    const closeRegisterSite = () => {
+        props.wouldLikeRegister(false);
     }
 
     const isValidEmail = (email: string) => {
@@ -130,9 +127,6 @@ export default function RegisterPage(props: Props) {
                                  onChange={(e) => setConfirmPassword(e.target.value)}
                                  placeholder="Bello123!"
                                  required/>
-
-                    {error && <StyledMessage>{error}</StyledMessage>}
-                    {messageStatus && <StyledMessage>{messageStatus}</StyledMessage>}
                 </StyledDiv1>
                 <StyledDiv2>
                     <PasswordChecklist
@@ -153,6 +147,8 @@ export default function RegisterPage(props: Props) {
             <StyledDiv3>
                 <StyledButton onClick={handleRegisterSubmit}>
                     <Icon icon="mdi:register" inline={true} width="14"/> Registrieren</StyledButton>
+                {error && <StyledMessage>{error}</StyledMessage>}
+                {messageStatus && <StyledMessage>{messageStatus}</StyledMessage>}
             </StyledDiv3>
         </StyledSection>
     </>;
@@ -199,7 +195,8 @@ const StyledForm = styled.form`
 const StyledMessage = styled.p`
   margin: 10px;
   padding: 8px;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+  color: var(--color-text);
 `
 
 const StyledButton = styled.button`

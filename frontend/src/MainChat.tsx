@@ -55,11 +55,9 @@ export default function MainChat() {
     return <>
         <StyledSpan>{connectionStatus}</StyledSpan>
         <StyledDiv1>
-            <StyledMessage>
-                <ul>
+                <StyledUl>
                     {messages}
-                </ul>
-            </StyledMessage>
+                </StyledUl>
             <StyledDiv2>
                 <StyledInputForm onSubmit={handleMessageSubmit}>
                     <StyledInput
@@ -81,20 +79,32 @@ export default function MainChat() {
     </>
 }
 
-const StyledMessage = styled.article`
-  display: block;
-  word-wrap: break-word;
-  margin-top: 0;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 1.4rem;
-  line-height: 18px;
-  color: var(--color-white);
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.45);
-  margin-bottom: 12px;
-  height: 500px;
+const StyledUl = styled.ul`
+  height: 65vh;
+  width: 80%;
   overflow: auto;
   overflow-scrolling: inherit;
+
+  @media (max-height: 700px) {
+    height: 50vh;
+  }
+  
+  @media (max-height: 500px) {
+    height: 40vh;
+  }
+`
+
+const StyledLi = styled.li`
+  margin: 4px 30px 4px 0;
+  padding: 2px;
+  display: block;
+  word-wrap: break-word;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 18px;
+  color: var(--color-text);
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.45);  
 `
 
 const StyledSpan = styled.span`
@@ -132,8 +142,7 @@ const StyledInputForm = styled.form`
 const StyledInput = styled.input`
   width: 100%;
   font-size: 1.6rem;
-  padding: 0.4rem;
-  padding-left: 0.8rem;
+  padding: 0.4rem 0 0 0.8rem;
   color: #2e2e2e;
   background-color: rgba(0, 0, 0, 0);
   border: none;
@@ -176,9 +185,4 @@ const StyledInputButton = styled.button`
     outline: 2px solid #0060df;
     border-radius: 0 12px 12px 0;
   }
-`
-
-const StyledLi = styled.li`
-  margin: 4px;
-  padding: 2px;
 `

@@ -14,14 +14,30 @@ body {
     --color-blue: rgb(0, 0, 255);
     --color-green: rgb(0, 255, 0);
     --color-yellow: rgb(255, 255, 0);
-    --color-text: #292929;
-    --color-background: #595959;
-    --color-button-background: rgba(240, 240, 240, 0.8);
-    --color-button-hover: #6082ee;
-    --color-button-active: rgba(47, 96, 255, 0.48);
-    --color-input-shadow: rgba(0, 0, 0, 0.5);
-    --color-input-border: #D0D4D9;
+}
 
+@media (prefers-color-scheme: dark) {
+    body {
+        --color-text: rgb(250, 250, 250);
+        --color-background: #595959;
+        --color-button-background: rgba(240, 240, 240, 0.8);
+        --color-button-hover: #6082ee;
+        --color-button-active: rgba(47, 96, 255, 0.48);
+        --color-input-shadow: rgba(0, 0, 0, 0.5);
+        --color-input-border: #D0D4D9;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    body {
+        --color-text: #292929;
+        --color-background: #595959;
+        --color-button-background: rgba(240, 240, 240, 0.8);
+        --color-button-hover: #6082ee;
+        --color-button-active: rgba(47, 96, 255, 0.48);
+        --color-input-shadow: rgba(0, 0, 0, 0.5);
+        --color-input-border: #D0D4D9;
+    }
 }
 
 a {
