@@ -5,6 +5,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/chrat-users")
@@ -14,7 +15,7 @@ public class ChratUserController {
     private final ChratService chratService;
 
     @PostMapping
-    public void createAppUser(@RequestBody ChratUserDTO chratUserDTO) {
+    public void createAppUser(@Valid @RequestBody ChratUserDTO chratUserDTO) {
         chratService.save(chratUserDTO);
     }
 
