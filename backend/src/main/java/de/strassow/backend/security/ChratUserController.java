@@ -1,6 +1,6 @@
 package de.strassow.backend.security;
 
-import de.strassow.backend.auth.ChratAuthService;
+import de.strassow.backend.mainchat.MainChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +14,7 @@ import javax.validation.Valid;
 public class ChratUserController {
 
     private final ChratService chratService;
-
-    private final ChratAuthService chratAuthService;
+    private final MainChatService mainChatService;
 
     @PostMapping
     public void createAppUser(@Valid @RequestBody ChratUserDTO chratUserDTO) {
@@ -38,7 +37,7 @@ public class ChratUserController {
                 .getContext()
                 .getAuthentication()
                 .getName();
-        chratAuthService.saveAuthTokenToDb(username);
+        mainChatService.sendUsernameToService(username);
         return username;
     }
 }
