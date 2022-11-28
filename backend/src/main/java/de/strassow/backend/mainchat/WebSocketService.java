@@ -21,10 +21,10 @@ public class WebSocketService extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         super.handleTextMessage(session, message);
 
-        MainChatMessage test = mainChatService.addMessage(message.getPayload());
+        MainChatMessage mainChatMessage = mainChatService.addMessage(message.getPayload());
         sessions.forEach(webSocketSession -> {
             try {
-                webSocketSession.sendMessage(new TextMessage(test.message()));
+                webSocketSession.sendMessage(new TextMessage(mainChatMessage.message()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
