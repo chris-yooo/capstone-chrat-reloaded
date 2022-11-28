@@ -33,14 +33,14 @@ public class SecurityConfig {
                 ).permitAll()
                 .antMatchers(
                         HttpMethod.GET,
-                        "/api/chrat-users/me"
+                        "/api/chrat-users/me", "/"
                 ).permitAll()
                 .antMatchers(
                         "/api/mainchat",
                         "/api/chrat-users/login",
                         "/api/chrat-users/logout"
                 ).authenticated()
-                .anyRequest().permitAll()
+                .anyRequest().denyAll()
                 .and().build();
     }
 
