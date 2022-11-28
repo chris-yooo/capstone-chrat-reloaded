@@ -146,7 +146,7 @@ export default function RegisterPage(props: Props) {
             </StyledForm>
             <StyledDiv3>
                 <StyledButton onClick={handleRegisterSubmit}>
-                    <Icon icon="mdi:register" inline={true} width="14"/> Registrieren</StyledButton>
+                    <Icon icon="mdi:register" inline={true} width="15"/> Registrieren</StyledButton>
                 {error && <StyledMessage>{error}</StyledMessage>}
                 {messageStatus && <StyledMessage>{messageStatus}</StyledMessage>}
             </StyledDiv3>
