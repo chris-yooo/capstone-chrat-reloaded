@@ -17,25 +17,24 @@ public class MainChatService {
     public final ChratUserTokenRepository chratUserTokenRepository;
     public final ChratUserUtils chratUserUtils;
 
-    String test;
+    String usernameToSend;
 
-    public String sendUsernameToService(String username) {
+    public void sendUsernameToService(String username) {
         if (Objects.equals(username, "anonymousUser")) {
-            return null;
+            return;
         }
         if (chratUserTokenRepository.findByUsername(username).isPresent()) {
             chratUserTokenRepository.deleteAllByUsername(username);
         }
         final ChratUserToken chratUserToken = new ChratUserToken(chratUserUtils.addUUIDasString(), username);
         chratUserTokenRepository.save(chratUserToken);
-        test = chratUserToken.username();
-        return username;
+        usernameToSend = chratUserToken.username();
     }
 
     public MainChatMessage addMessage(String textMessage) {
-        String now = mainChatUtils.addLocalDateTimeFormatted();
-        String dateTimeMessage = now + ": " + textMessage;
-        String usernameDateTimeMessage = dateTimeMessage + " " + test;
+        String dateTime = mainChatUtils.addLocalDateTimeFormatted();
+        String usernameMessage = usernameToSend + " - " + dateTime;
+        String usernameDateTimeMessage = usernameMessage + ":  " + textMessage;
         MainChatMessage mainChatMessage = new MainChatMessage(usernameDateTimeMessage);
         mainChatRepository.save(mainChatMessage);
         return mainChatMessage;
@@ -44,6 +43,4 @@ public class MainChatService {
     public List<MainChatMessage> getMessages() {
         return mainChatRepository.findAll();
     }
-
-
 }
