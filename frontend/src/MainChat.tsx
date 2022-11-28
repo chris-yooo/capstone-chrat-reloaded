@@ -6,12 +6,15 @@ import {Icon} from '@iconify/react';
 
 export default function MainChat() {
 
-    let host = window.location.host;
+    const host = window.location.host;
+    let baseUrl
     if (host === "localhost:3000") {
-        host = "localhost:8080";
+        baseUrl = "ws://localhost:8080"
+    } else {
+        baseUrl = "wss://" + host;
     }
 
-    const wsServiceUrl = 'ws://' + host + '/api/mainchat';
+    const wsServiceUrl = baseUrl + '/api/mainchat';
 
     const [messageHistory, setMessageHistory] = useState<string[]>([]);
     const [message, setMessage] = useState('');
