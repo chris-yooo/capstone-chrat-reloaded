@@ -13,8 +13,10 @@ public class ChratAuthService {
     public final ChratUserUtils chratUserUtils;
 
     public void saveAuthTokenToDb(String username) {
-        String randomId = chratUserUtils.addUUIDasString();
-        ChratUserToken chratUserToken = new ChratUserToken(randomId, username);
-      chratUserTokenRepository.save(chratUserToken);
+        if (chratUserTokenRepository.findByUsername(username).isPresent()) {
+            chratUserTokenRepository.deleteAllByUsername(username);
+        }
+        final ChratUserToken chratUserToken = new ChratUserToken(chratUserUtils.addUUIDasString(), username);
+        chratUserTokenRepository.save(chratUserToken);
     }
 }

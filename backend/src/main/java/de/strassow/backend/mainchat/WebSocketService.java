@@ -1,5 +1,6 @@
 package de.strassow.backend.mainchat;
 
+import de.strassow.backend.auth.ChratUserToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
@@ -17,18 +18,23 @@ public class WebSocketService extends TextWebSocketHandler {
     private final Set<WebSocketSession> sessions = new HashSet<>();
     private final MainChatService mainChatService;
 
+    private final ChratUserToken chratUserToken;
+
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         super.handleTextMessage(session, message);
 
-        MainChatMessage mainChatMessage = mainChatService.addMessage(message.getPayload());
-        sessions.forEach(webSocketSession -> {
-            try {
-                webSocketSession.sendMessage(new TextMessage(mainChatMessage.message()));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+        if (chratUserToken.id().equals("743d1787-96db-4f5c-a704-d2167daa6bf7")) {
+            String username = chratUserToken.username();
+            MainChatMessage mainChatMessage = mainChatService.addMessage(message.getPayload(), username);
+            sessions.forEach(webSocketSession -> {
+                try {
+                    webSocketSession.sendMessage(new TextMessage(mainChatMessage.message()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
     }
 
     @Override
