@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -39,7 +40,8 @@ class ChratUserControllerTest {
 
     @DirtiesContext
     @Test
-    void loginWithTestUserAndExpectOK() throws Exception {
+    @WithMockUser
+    void loginWithTestUser() throws Exception {
         mvc.perform(MockMvcRequestBuilders.post("/api/chrat-users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -59,6 +61,7 @@ class ChratUserControllerTest {
 
     @DirtiesContext
     @Test
+    @WithMockUser
     void loginWithTestUserAndLogout() throws Exception {
 
         mvc.perform(MockMvcRequestBuilders.post("/api/chrat-users")
@@ -78,14 +81,14 @@ class ChratUserControllerTest {
                 .andExpect(status().isOk()).andExpect(content().string("OK"));
 
         mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/logout")
-                        .header("Authorization", "Basic " + base64ClientCredentials)
                         .accept("application/json;charset=UTF-8"))
                 .andExpect(status().isOk());
-//        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/me")).andExpect(status().isUnauthorized());
+        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/me")).andExpect(status().isOk());
     }
 
     @DirtiesContext
     @Test
+    @WithMockUser
     void createUserAndCheckLoginMe() throws Exception {
 
         mvc.perform(MockMvcRequestBuilders.post("/api/chrat-users")
@@ -99,9 +102,13 @@ class ChratUserControllerTest {
                                 """))
                 .andExpect(status().isOk());
 
-        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/me")
+        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/login")
                         .header("Authorization", "Basic " + base64ClientCredentials)
                         .accept("application/json;charset=UTF-8"))
-                .andExpect(status().isOk()).andExpect(content().string("detlev"));
+                .andExpect(status().isOk()).andExpect(content().string("OK"));
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/me")
+                        .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isOk());
     }
 }
