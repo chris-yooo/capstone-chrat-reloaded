@@ -2,24 +2,29 @@ import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import LoggedInPage from "./LoggedInPage";
 import LoginPage from './LoginPage';
+import {ChratUserModel} from "./ChratUserModel";
 
 export default function App() {
 
-    const [username, setUsername] = useState<string>();
+    const [user, setUser] = useState<ChratUserModel>();
 
     const fetchUsername = () => {
         axios.get('/api/chrat-users/me')
             .then(response => response.data)
-            .then(setUsername)
+            .then(setUser)
     }
 
     useEffect(fetchUsername, [])
 
-    if (username === undefined) {
+    if (user === undefined) {
+        return <LoginPage fetchUsername={fetchUsername} />
+    }
+
+    if (!user.username) {
         return <>Bitte haben Sie einen Augenblick Geduld...</>
     }
-    if (username === 'anonymousUser') {
+    if (user.username === 'anonymousUser') {
         return <LoginPage fetchUsername={fetchUsername}></LoginPage>
     }
-    return <LoggedInPage username={username} onLogout={fetchUsername}></LoggedInPage>
+    return <LoggedInPage user={user} onLogout={fetchUsername}></LoggedInPage>
 }

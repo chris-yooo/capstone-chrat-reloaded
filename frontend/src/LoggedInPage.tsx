@@ -3,9 +3,10 @@ import {Route, Routes} from "react-router";
 import MainChat from "./MainChat";
 import React from "react";
 import styled from "styled-components";
+import {ChratUserModel} from "./ChratUserModel";
 
 type Props = {
-    username: string,
+    user: ChratUserModel
     onLogout: () => void
 }
 
@@ -25,7 +26,7 @@ export default function LoggedInPage(props: Props) {
         </StyledHeader>
         <StyledMain>
             <Routes>
-                <Route path="/" element={<MainChat/>}/>
+                <Route path="/" element={<MainChat user={props.user} />}/>
             </Routes>
         </StyledMain>
     </>
