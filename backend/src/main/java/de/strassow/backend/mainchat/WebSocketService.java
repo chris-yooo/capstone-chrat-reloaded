@@ -2,9 +2,7 @@ package de.strassow.backend.mainchat;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.util.HashSet;
@@ -21,6 +19,8 @@ public class WebSocketService extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         super.handleTextMessage(session, message);
 
+        if (sessions.contains(session)) {
+
             MainChatMessage mainChatMessage = mainChatService.addMessage(message.getPayload());
             sessions.forEach(webSocketSession -> {
                 try {
@@ -29,15 +29,24 @@ public class WebSocketService extends TextWebSocketHandler {
                     e.printStackTrace();
                 }
             });
-    }
+            return;
+        }
 
-    @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        super.afterConnectionEstablished(session);
-        sessions.add(session);
+        if (message.getPayload().contains("id")) {
 
-        for (MainChatMessage mainChatMessage : mainChatService.getMessages()) {
-            session.sendMessage(new TextMessage(mainChatMessage.message()));
+            String token = message.getPayload().substring(10, 46);
+
+            if (token.equals(mainChatService.tokenToCompare(token))) {
+                sessions.add(session);
+                mainChatService.deleteUserTokenAfterSessionAdd(token);
+
+                for (MainChatMessage mainChatMessage : mainChatService.getMessages()) {
+                    session.sendMessage(new TextMessage(mainChatMessage.message()));
+                }
+            }
+
+        } else {
+            session.sendMessage(new TextMessage("Token is not valid"));
         }
     }
 
