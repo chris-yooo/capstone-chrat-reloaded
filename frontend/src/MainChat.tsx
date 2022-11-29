@@ -9,10 +9,10 @@ type Props = {
     user: ChratUserModel
 }
 
-type Message = {
+type MainChatMessage = {
     username: string,
     message: string,
-    date: string,
+    datetime: string,
 }
 
 export default function MainChat(props: Props) {
@@ -27,8 +27,8 @@ export default function MainChat(props: Props) {
 
     const wsServiceUrl = baseUrl + '/api/mainchat';
 
-    const [messageHistory, setMessageHistory] = useState<Message[]>([]);
-    const [message, setMessage] = useState('');
+    const [MainChatMessage, setMainChatMessage] = useState<MainChatMessage[]>([]);
+    const [messageInput, setMessageInput] = useState('');
 
     const WebSocket = useWebSocket(wsServiceUrl, {
         onOpen: () => {
@@ -37,7 +37,7 @@ export default function MainChat(props: Props) {
         },
         onMessage: (event) => {
             let parsed = event.data;
-            setMessageHistory((messageHistory: Message[]) => [...messageHistory, parsed]);
+            setMainChatMessage((messageHistory: MainChatMessage[]) => [...messageHistory, parsed]);
         },
         onClose: () => {
             console.log("Disconnected from websocket");
@@ -46,26 +46,34 @@ export default function MainChat(props: Props) {
 
     const handleMessageSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        messageToSend();
-        setMessage('');
+        WebSocket.sendMessage(messageInput)
+        setMessageInput('');
     }
-
-    const messageToSend = () => WebSocket.sendMessage(message);
-
-    const readyState = WebSocket.readyState;
 
     const connectionStatus = {
         [ReadyState.CONNECTING]: <Icon icon="fluent:plug-connected-20-regular" color="var(--color-yellow)" width="40" />,
         [ReadyState.OPEN]: <Icon icon="fluent:plug-connected-20-filled" width="40" color="var(--color-white)"/>,
-        [ReadyState.CLOSING]: <Icon icon="tabler:plug-connected-x" color="var(--color-blue)" width="40" />,
+        [ReadyState.CLOSING]: <Icon icon="fluent:plug-connected-20-regular" color="var(--color-yellow)" width="40" />,
         [ReadyState.CLOSED]: <Icon icon="tabler:plug-connected-x" color="var(--color-red)" width="40" />,
-        [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
-    }[readyState];
+        [ReadyState.UNINSTANTIATED]: <Icon icon="tabler:plug-connected-x" color="var(--color-red)" width="40" />,
+    }[WebSocket.readyState];
 
-    const messages = messageHistory.map((message: Message) =>
-        <StyledLi key={nanoid()}>
-            {message.username} {message.date} {message.message}
-        </StyledLi>);
+    const messages = MainChatMessage.map((data, idx) =>
+        // <StyledLi key={nanoid()}>
+            <p key={idx}>{data.datetime}</p>);
+               // <p>{MainChatMessage.username}</p>
+                // <p>{MainChatMessage.datetime}</p>
+                // <p>{MainChatMessage.message}</p>
+
+        // </StyledLi>)
+
+
+
+    // const renData = this.props.dataA.map((data, idx) => {
+    //     return <p key={idx}>{data}</p>
+    // });
+
+console.log(messages)
 
     return <>
         <StyledSpan>{connectionStatus}</StyledSpan>
@@ -76,10 +84,10 @@ export default function MainChat(props: Props) {
             <StyledDiv2>
                 <StyledInputForm onSubmit={handleMessageSubmit}>
                     <StyledInput
-                        disabled={readyState !== ReadyState.OPEN}
-                        onChange={(e) => setMessage(e.target.value)}
+                        disabled={WebSocket.readyState !== ReadyState.OPEN}
+                        onChange={(e) => setMessageInput(e.target.value)}
                         type="text"
-                        value={message}
+                        value={messageInput}
                         autoComplete="off"
                         name="message"
                         id="message"
@@ -141,7 +149,7 @@ const StyledDiv2 = styled.div`
   position: fixed;
   bottom: 52px;
   justify-content: space-between;
-  width: 346px;
+  width: 370px;
   height: 45px;
   background: #d9d9d9;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
@@ -151,13 +159,12 @@ const StyledDiv2 = styled.div`
 const StyledInputForm = styled.form`
   display: flex;
   justify-content: space-between;
-  width: 100%;
 `;
 
 const StyledInput = styled.input`
   width: 100%;
   font-size: 1.6rem;
-  padding: 0.4rem 0 0 0.8rem;
+  padding: 0 0 0 0.8rem;
   color: #2e2e2e;
   background-color: rgba(0, 0, 0, 0);
   border: none;

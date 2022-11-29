@@ -19,7 +19,6 @@ export default function App() {
     if (user === undefined) {
         return <LoginPage fetchUsername={fetchUsername} />
     }
-
     if (!user.username) {
         return <>Bitte haben Sie einen Augenblick Geduld...</>
     }

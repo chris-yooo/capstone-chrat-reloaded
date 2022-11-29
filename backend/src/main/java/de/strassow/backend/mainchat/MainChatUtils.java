@@ -10,7 +10,7 @@ public class MainChatUtils {
 
     public String addLocalDateTimeFormatted() {
         LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm:ss");
         return now.format(formatter);
     }
 }
