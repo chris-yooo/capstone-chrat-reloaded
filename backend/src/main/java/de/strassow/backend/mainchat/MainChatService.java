@@ -31,11 +31,22 @@ public class MainChatService {
         usernameToSend = chratUserToken.username();
     }
 
+    public void deleteUserTokenAfterSessionAdd(String id) {
+        if (chratUserTokenRepository.findById(id).isPresent()) {
+            chratUserTokenRepository.deleteById(id);
+        }
+    }
+
+    public String tokenToCompare(String id) {
+        if (chratUserTokenRepository.findById(id).isPresent()) {
+            return id;
+        }
+        throw new NoSuchElementException("No value present");
+    }
+
     public MainChatMessage addMessage(String textMessage) {
         String dateTime = mainChatUtils.addLocalDateTimeFormatted();
-        String usernameMessage = usernameToSend + " - " + dateTime;
-        String usernameDateTimeMessage = usernameMessage + ":  " + textMessage;
-        MainChatMessage mainChatMessage = new MainChatMessage(usernameDateTimeMessage);
+        MainChatMessage mainChatMessage = new MainChatMessage(usernameToSend, dateTime, textMessage);
         mainChatRepository.save(mainChatMessage);
         return mainChatMessage;
     }

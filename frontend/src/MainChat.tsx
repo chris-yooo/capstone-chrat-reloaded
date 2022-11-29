@@ -22,6 +22,7 @@ export default function MainChat() {
     const WebSocket = useWebSocket(wsServiceUrl, {
         onOpen: () => {
             console.log("Connected to websocket");
+            // ToDo: SEND TOKEN
         },
         onMessage: (event) => {
             let parsed = event.data;
