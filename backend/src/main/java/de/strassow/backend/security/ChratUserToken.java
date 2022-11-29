@@ -1,4 +1,4 @@
-package de.strassow.backend.auth;
+package de.strassow.backend.security;
 
 public record ChratUserToken(
         String id,
