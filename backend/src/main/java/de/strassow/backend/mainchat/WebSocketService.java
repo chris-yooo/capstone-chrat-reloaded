@@ -1,30 +1,35 @@
 package de.strassow.backend.mainchat;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.strassow.backend.auth.ChratUserToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.*;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class WebSocketService extends TextWebSocketHandler {
 
-    private final Set<WebSocketSession> sessions = new HashSet<>();
+    private final Map<WebSocketSession, String> sessions = new HashMap<>();
     private final MainChatService mainChatService;
+    private final ObjectMapper objectMapper;
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         super.handleTextMessage(session, message);
 
-        if (sessions.contains(session)) {
+        if (sessions.containsKey(session)) {
 
-            MainChatMessage mainChatMessage = mainChatService.addMessage(message.getPayload());
-            sessions.forEach(webSocketSession -> {
+            MainChatMessage mainChatMessage = mainChatService.addMessage(message.getPayload(), sessions.get(session));
+            sessions.forEach((webSocketSession, username) -> {
                 try {
-                    webSocketSession.sendMessage(new TextMessage(mainChatMessage.message()));
+                    webSocketSession.sendMessage(new TextMessage(mainChatMessage.toString()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -33,21 +38,18 @@ public class WebSocketService extends TextWebSocketHandler {
         }
 
         if (message.getPayload().contains("id")) {
+            ChratUserToken token = objectMapper.readValue(message.getPayload(), ChratUserToken.class);
+            String username = mainChatService.tokenToCompare(token.id());
+            sessions.put(session, username);
+            mainChatService.deleteUserTokenAfterSessionAdd(token.id());
 
-            String token = message.getPayload().substring(10, 46);
-
-            if (token.equals(mainChatService.tokenToCompare(token))) {
-                sessions.add(session);
-                mainChatService.deleteUserTokenAfterSessionAdd(token);
-
-                for (MainChatMessage mainChatMessage : mainChatService.getMessages()) {
-                    session.sendMessage(new TextMessage(mainChatMessage.message()));
-                }
+            for (MainChatMessage mainChatMessage : mainChatService.getMessages()) {
+                session.sendMessage(new TextMessage(mainChatMessage.message()));
             }
-
-        } else {
-            session.sendMessage(new TextMessage("Token is not valid"));
+            return;
         }
+
+        session.sendMessage(new TextMessage("Token is not valid"));
     }
 
     @Override

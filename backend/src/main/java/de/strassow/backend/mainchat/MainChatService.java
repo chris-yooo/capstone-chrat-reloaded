@@ -6,7 +6,9 @@ import de.strassow.backend.security.ChratUserUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +23,7 @@ public class MainChatService {
 
     public ChratUserToken sendUsernameToService(String username) {
         if (Objects.equals(username, "anonymousUser")) {
-            return null;
+            return new ChratUserToken("", "anonymousUser");
         }
         if (chratUserTokenRepository.findByUsername(username).isPresent()) {
             chratUserTokenRepository.deleteAllByUsername(username);
@@ -33,21 +35,17 @@ public class MainChatService {
     }
 
     public void deleteUserTokenAfterSessionAdd(String id) {
-        if (chratUserTokenRepository.findById(id).isPresent()) {
-            chratUserTokenRepository.deleteById(id);
-        }
+        chratUserTokenRepository.findById(id);
+        chratUserTokenRepository.deleteById(id);
     }
 
     public String tokenToCompare(String id) {
-        if (chratUserTokenRepository.findById(id).isPresent()) {
-            return id;
-        }
-        throw new NoSuchElementException("No value present");
+        return chratUserTokenRepository.findById(id).map(ChratUserToken::username).orElseThrow(() -> new NoSuchElementException("No value present"));
     }
 
-    public MainChatMessage addMessage(String textMessage) {
+    public MainChatMessage addMessage(String textMessage, String username) {
         String dateTime = mainChatUtils.addLocalDateTimeFormatted();
-        MainChatMessage mainChatMessage = new MainChatMessage(usernameToSend, dateTime, textMessage);
+        MainChatMessage mainChatMessage = new MainChatMessage(username, dateTime, textMessage);
         mainChatRepository.save(mainChatMessage);
         return mainChatMessage;
     }

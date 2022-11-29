@@ -3,8 +3,19 @@ import styled from "styled-components";
 import useWebSocket, {ReadyState} from 'react-use-websocket';
 import {nanoid} from "nanoid";
 import {Icon} from '@iconify/react';
+import {ChratUserModel} from "./ChratUserModel";
 
-export default function MainChat() {
+type Props = {
+    user: ChratUserModel
+}
+
+type Message = {
+    username: string,
+    message: string,
+    date: string,
+}
+
+export default function MainChat(props: Props) {
 
     const host = window.location.host;
     let baseUrl
@@ -16,17 +27,17 @@ export default function MainChat() {
 
     const wsServiceUrl = baseUrl + '/api/mainchat';
 
-    const [messageHistory, setMessageHistory] = useState<string[]>([]);
+    const [messageHistory, setMessageHistory] = useState<Message[]>([]);
     const [message, setMessage] = useState('');
 
     const WebSocket = useWebSocket(wsServiceUrl, {
         onOpen: () => {
             console.log("Connected to websocket");
-            // ToDo: SEND TOKEN
+            WebSocket.sendMessage(JSON.stringify(props.user))
         },
         onMessage: (event) => {
             let parsed = event.data;
-            setMessageHistory((messageHistory: string[]) => [...messageHistory, parsed]);
+            setMessageHistory((messageHistory: Message[]) => [...messageHistory, parsed]);
         },
         onClose: () => {
             console.log("Disconnected from websocket");
@@ -51,9 +62,9 @@ export default function MainChat() {
         [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
     }[readyState];
 
-    const messages = messageHistory.map((message: any) =>
+    const messages = messageHistory.map((message: Message) =>
         <StyledLi key={nanoid()}>
-            {message ? message : null}
+            {message.username} {message.date} {message.message}
         </StyledLi>);
 
     return <>
