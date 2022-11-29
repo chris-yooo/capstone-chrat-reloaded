@@ -27,6 +27,7 @@ class MainChatServiceTest {
         String id = "123123123123";
         ChratUserToken actual = new ChratUserToken(id, username);
         // when
+        when(chratUserTokenRepository.findByUsername(username)).thenReturn(java.util.Optional.of(actual));
         when(chratUserUtils.addUUIDasString()).thenReturn(id);
         ChratUserToken expected = mainChatService.chratUserToken(username);
         when(chratUserTokenRepository.save(expected)).thenReturn(expected);
@@ -34,6 +35,25 @@ class MainChatServiceTest {
         verify(chratUserUtils).addUUIDasString();
         verify(chratUserTokenRepository).save(expected);
         assertEquals(expected, actual);
+    }
+
+    @Test
+    void deleteUserTokenAfterSessionAdd() {
+        // given
+        String id = "123123123123";
+        String username = "chris_yooo";
+        when(chratUserTokenRepository.findById(id)).thenReturn(java.util.Optional.of(new ChratUserToken(id, username)));
+        mainChatService.deleteUserTokenAfterSessionAdd(id);
+        assertEquals(0, mainChatService.chratUserTokenRepository.count());
+    }
+
+    @Test
+    void tokenToCompare() {
+        // given
+        String id = "123123123123";
+        String username = "chris_yooo";
+        when(chratUserTokenRepository.findById(id)).thenReturn(java.util.Optional.of(new ChratUserToken(id, username)));
+        assertEquals(username, mainChatService.tokenToCompare(id));
     }
 
     @Test
