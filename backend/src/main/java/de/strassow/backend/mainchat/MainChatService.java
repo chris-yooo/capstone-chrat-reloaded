@@ -19,9 +19,9 @@ public class MainChatService {
 
     String usernameToSend;
 
-    public void sendUsernameToService(String username) {
+    public ChratUserToken sendUsernameToService(String username) {
         if (Objects.equals(username, "anonymousUser")) {
-            return;
+            return null;
         }
         if (chratUserTokenRepository.findByUsername(username).isPresent()) {
             chratUserTokenRepository.deleteAllByUsername(username);
@@ -29,6 +29,7 @@ public class MainChatService {
         final ChratUserToken chratUserToken = new ChratUserToken(chratUserUtils.addUUIDasString(), username);
         chratUserTokenRepository.save(chratUserToken);
         usernameToSend = chratUserToken.username();
+        return chratUserToken;
     }
 
     public void deleteUserTokenAfterSessionAdd(String id) {

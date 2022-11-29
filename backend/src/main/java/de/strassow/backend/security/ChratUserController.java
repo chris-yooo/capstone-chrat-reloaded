@@ -1,5 +1,6 @@
 package de.strassow.backend.security;
 
+import de.strassow.backend.auth.ChratUserToken;
 import de.strassow.backend.mainchat.MainChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,12 +33,11 @@ public class ChratUserController {
     }
 
     @GetMapping("/me")
-    public String me() {
+    public ChratUserToken me() {
         String username = SecurityContextHolder
                 .getContext()
                 .getAuthentication()
                 .getName();
-        mainChatService.sendUsernameToService(username);
-        return username;
+        return mainChatService.sendUsernameToService(username);
     }
 }
