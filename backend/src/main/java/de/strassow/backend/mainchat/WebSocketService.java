@@ -44,7 +44,7 @@ public class WebSocketService extends TextWebSocketHandler {
             mainChatService.deleteUserTokenAfterSessionAdd(token.id());
 
             for (MainChatMessage mainChatMessage : mainChatService.getMessages()) {
-                session.sendMessage(new TextMessage(mainChatMessage.message()));
+                session.sendMessage(new TextMessage(mainChatMessage.toString()));
             }
             return;
         }
