@@ -13,21 +13,21 @@ class MainChatServiceTest {
 
     MainChatUtils mainChatUtils = mock(MainChatUtils.class);
     MainChatRepository mainChatRepository = mock(MainChatRepository.class);
-    MainChatService mainChatService = new MainChatService(mainChatRepository, mainChatUtils);
+    MainChatService mainChatService = new MainChatService(mainChatRepository, mainChatUtils, null, null);
 
     @Test
     void addMessage() {
-        String messageWithoutDate = "123";
-        String date = "22.11.2022";
-        MainChatMessage messageWithDate = new MainChatMessage("22.11.2022: 123");
+        String messageWithoutDate = "moin";
+        String dateTime = "22.11.2022";
+        MainChatMessage usernameDateTimeMessage = new MainChatMessage("chris", "22.11.2022", "moin");
         //when
-        when(mainChatUtils.addLocalDateTimeFormatted()).thenReturn(date);
-        when(mainChatRepository.save(messageWithDate)).thenReturn(messageWithDate);
-        MainChatMessage actual = mainChatService.addMessage(messageWithoutDate);
+        when(mainChatUtils.addLocalDateTimeFormatted()).thenReturn(dateTime);
+        when(mainChatRepository.save(usernameDateTimeMessage)).thenReturn(usernameDateTimeMessage);
+        MainChatMessage actual = mainChatService.addMessage(messageWithoutDate, "chris");
         //then
         verify(mainChatUtils).addLocalDateTimeFormatted();
-        verify(mainChatRepository).save(messageWithDate);
-        assertEquals(messageWithDate, actual);
+        verify(mainChatRepository).save(usernameDateTimeMessage);
+        assertEquals(usernameDateTimeMessage, actual);
     }
 
     @Test

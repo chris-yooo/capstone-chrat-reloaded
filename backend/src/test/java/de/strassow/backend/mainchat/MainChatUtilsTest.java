@@ -15,7 +15,7 @@ class MainChatUtilsTest {
     void addLocalDateTimeFormatted() {
         //given
         LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm:ss");
         //when
         String actual = mainChatUtils.addLocalDateTimeFormatted();
         //then
