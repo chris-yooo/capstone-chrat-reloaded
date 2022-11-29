@@ -1,7 +1,7 @@
 package de.strassow.backend.mainchat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.strassow.backend.auth.ChratUserToken;
+import de.strassow.backend.security.ChratUserToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;

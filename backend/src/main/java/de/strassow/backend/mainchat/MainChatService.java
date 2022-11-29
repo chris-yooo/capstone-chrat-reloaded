@@ -1,7 +1,7 @@
 package de.strassow.backend.mainchat;
 
-import de.strassow.backend.auth.ChratUserToken;
-import de.strassow.backend.auth.ChratUserTokenRepository;
+import de.strassow.backend.security.ChratUserToken;
+import de.strassow.backend.security.ChratUserTokenRepository;
 import de.strassow.backend.security.ChratUserUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,18 +19,15 @@ public class MainChatService {
     public final ChratUserTokenRepository chratUserTokenRepository;
     public final ChratUserUtils chratUserUtils;
 
-    String usernameToSend;
-
-    public ChratUserToken sendUsernameToService(String username) {
+    public ChratUserToken chratUserToken(String username) {
         if (Objects.equals(username, "anonymousUser")) {
             return new ChratUserToken("", "anonymousUser");
         }
         if (chratUserTokenRepository.findByUsername(username).isPresent()) {
             chratUserTokenRepository.deleteAllByUsername(username);
         }
-        final ChratUserToken chratUserToken = new ChratUserToken(chratUserUtils.addUUIDasString(), username);
+        ChratUserToken chratUserToken = new ChratUserToken(chratUserUtils.addUUIDasString(), username);
         chratUserTokenRepository.save(chratUserToken);
-        usernameToSend = chratUserToken.username();
         return chratUserToken;
     }
 
@@ -40,7 +37,8 @@ public class MainChatService {
     }
 
     public String tokenToCompare(String id) {
-        return chratUserTokenRepository.findById(id).map(ChratUserToken::username).orElseThrow(() -> new NoSuchElementException("No value present"));
+        return chratUserTokenRepository.findById(id).map(ChratUserToken::username)
+                .orElseThrow(() -> new NoSuchElementException("No value present"));
     }
 
     public MainChatMessage addMessage(String textMessage, String username) {

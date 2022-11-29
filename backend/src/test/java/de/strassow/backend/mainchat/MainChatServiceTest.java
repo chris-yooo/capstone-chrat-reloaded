@@ -1,19 +1,51 @@
 package de.strassow.backend.mainchat;
 
+import de.strassow.backend.security.ChratUserToken;
+import de.strassow.backend.security.ChratUserTokenRepository;
+import de.strassow.backend.security.ChratUserUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
 
 class MainChatServiceTest {
 
-    MainChatUtils mainChatUtils = mock(MainChatUtils.class);
     MainChatRepository mainChatRepository = mock(MainChatRepository.class);
-    MainChatService mainChatService = new MainChatService(mainChatRepository, mainChatUtils, null, null);
+    MainChatUtils mainChatUtils = mock(MainChatUtils.class);
+    ChratUserTokenRepository chratUserTokenRepository = mock(ChratUserTokenRepository.class);
+    ChratUserUtils chratUserUtils = mock(ChratUserUtils.class);
+    MainChatService mainChatService = new MainChatService(mainChatRepository, mainChatUtils, chratUserTokenRepository, chratUserUtils);
+
+
+    @Test
+    void chratUserToken() {
+        // given
+        String username = "chris_yooo";
+        String id = "123123123123";
+        ChratUserToken actual = new ChratUserToken(id, username);
+        // when
+        when(chratUserUtils.addUUIDasString()).thenReturn(id);
+        ChratUserToken expected = mainChatService.chratUserToken(username);
+        when(chratUserTokenRepository.save(expected)).thenReturn(expected);
+        // then
+        verify(chratUserUtils).addUUIDasString();
+        verify(chratUserTokenRepository).save(expected);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void chratUserTokenAnonymousUser() {
+        // given
+        String username = "anonymousUser";
+        // when
+        ChratUserToken expected = mainChatService.chratUserToken(username);
+        ChratUserToken actual = new ChratUserToken("", "anonymousUser");
+        // then
+        assertEquals(expected, actual);
+    }
 
     @Test
     void addMessage() {

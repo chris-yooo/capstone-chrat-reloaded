@@ -8,8 +8,8 @@ import static org.mockito.Mockito.mock;
 
 class ChratServiceTest {
 
-    ChratUserUtils chratUserUtils = mock(ChratUserUtils.class);
     ChratRepository chratRepository = mock(ChratRepository.class);
+    ChratUserUtils chratUserUtils = mock(ChratUserUtils.class);
     ChratService chratService = new ChratService(chratRepository, chratUserUtils);
 
     @Test
