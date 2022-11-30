@@ -11,8 +11,8 @@ type Props = {
 
 type MainChatMessage = {
     username: string,
-    message: string,
     datetime: string,
+    message: string,
 }
 
 export default function MainChat(props: Props) {
@@ -27,7 +27,7 @@ export default function MainChat(props: Props) {
 
     const wsServiceUrl = baseUrl + '/api/mainchat';
 
-    const [MainChatMessage, setMainChatMessage] = useState<MainChatMessage[]>([]);
+    const [MainChatMessages, setMainChatMessage] = useState<MainChatMessage[]>([]);
     const [messageInput, setMessageInput] = useState('');
 
     const WebSocket = useWebSocket(wsServiceUrl, {
@@ -36,7 +36,7 @@ export default function MainChat(props: Props) {
             WebSocket.sendMessage(JSON.stringify(props.user))
         },
         onMessage: (event) => {
-            let parsed = event.data;
+            let parsed = JSON.parse(event.data.replace(/'/g, '"'));
             setMainChatMessage((messageHistory: MainChatMessage[]) => [...messageHistory, parsed]);
         },
         onClose: () => {
@@ -58,28 +58,19 @@ export default function MainChat(props: Props) {
         [ReadyState.UNINSTANTIATED]: <Icon icon="tabler:plug-connected-x" color="var(--color-red)" width="40" />,
     }[WebSocket.readyState];
 
-    const messages = MainChatMessage.map((data, idx) =>
-        // <StyledLi key={nanoid()}>
-            <p key={idx}>{data.datetime}</p>);
-               // <p>{MainChatMessage.username}</p>
-                // <p>{MainChatMessage.datetime}</p>
-                // <p>{MainChatMessage.message}</p>
 
-        // </StyledLi>)
+    const messageHistory = MainChatMessages.map((message: MainChatMessage) =>
+            <StyledLi key={nanoid()}>{message.username} {message.datetime}<br/>
+                <strong>{message.message}</strong></StyledLi>
+    );
 
-
-
-    // const renData = this.props.dataA.map((data, idx) => {
-    //     return <p key={idx}>{data}</p>
-    // });
-
-console.log(messages)
+ console.log(MainChatMessages)
 
     return <>
         <StyledSpan>{connectionStatus}</StyledSpan>
         <StyledDiv1>
                 <StyledUl>
-                    {messages}
+                    {messageHistory}
                 </StyledUl>
             <StyledDiv2>
                 <StyledInputForm onSubmit={handleMessageSubmit}>
