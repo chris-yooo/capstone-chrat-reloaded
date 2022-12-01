@@ -35,6 +35,31 @@ export default function Profile(props: Props) {
             .then(setUserDetails)
     }
 
+    const putUserDetails = () => {
+        axios.put("/api/chrat-users/" + props.user.username, {
+            username,
+            firstName,
+            lastName,
+            email,
+        })
+            .then((response) => response.status)
+            .then((status) => {
+                if (status === 200) {
+                    setMessageStatus("Erfolreich geändert.");
+                    (setTimeout(() => setMessageStatus(""), 2000));
+                    setDoEdit(false);
+                    getUserDetails();
+                }
+            })
+            .catch((error) => {
+                if (error.response.status === 400) {
+                    setError("Fehler beim Ändern.");
+                    (setTimeout(() => setError(""), 5000));
+                }
+                console.log("Error =>" + error)
+            })
+    }
+
     useEffect(getUserDetails, [])
 
     const toggleDoEdit = () => {
@@ -43,48 +68,51 @@ export default function Profile(props: Props) {
 
     return <>
         <StyledSection>
-            <StyledDiv1>
-                <StyledLabel htmlFor={"username"}>Username:</StyledLabel>
-                <StyledInput type='text'
-                             id="username"
-                             value={userDetails.username}
-                             onChange={(e) => setUsername(e.target.value)}
-                             placeholder="chris_yooo"
-                             disabled={!doEdit}
-                             required/>
+            <form onClick={toggleDoEdit}>
+                <StyledDiv1>
+                    <StyledLabel htmlFor={"username"}>Username:</StyledLabel>
+                    <StyledInput type="tex"
+                                 id="username"
+                                 value={userDetails.username}
+                                 onChange={(e) => setUsername(e.target.value)}
+                                 placeholder="chris_yooo"
+                                 disabled={!doEdit}
+                                 required/>
 
-                <StyledLabel htmlFor="firstname">Vorname:</StyledLabel>
-                <StyledInput type='text'
-                             id="firstname"
-                             value={userDetails.firstName}
-                             onChange={(e) => setFirstName(e.target.value)}
-                             placeholder={"Chris"}
-                             disabled={!doEdit}
-                             required/>
+                    <StyledLabel htmlFor="firstname">Vorname:</StyledLabel>
+                    <StyledInput type="text"
+                                 id="firstname"
+                                 value={userDetails.firstName}
+                                 onChange={(e) => setFirstName(e.target.value)}
+                                 placeholder={"Chris"}
+                                 disabled={!doEdit}
+                                 required/>
 
-                <StyledLabel htmlFor={"lastname"}>Nachname:</StyledLabel>
-                <StyledInput type='text'
-                             id="lastname"
-                             value={userDetails.lastName}
-                             onChange={(e) => setLastName(e.target.value)}
-                             placeholder="Yoo"
-                             disabled={!doEdit}
-                             required/>
+                    <StyledLabel htmlFor={"lastname"}>Nachname:</StyledLabel>
+                    <StyledInput type="text"
+                                 id="lastname"
+                                 value={userDetails.lastName}
+                                 onChange={(e) => setLastName(e.target.value)}
+                                 placeholder="Yoo"
+                                 disabled={!doEdit}
+                                 required/>
 
-                <StyledLabel htmlFor={"email"}>E-Mail:</StyledLabel>
-                <StyledInput type='text'
-                             id="email"
-                             value={userDetails.email}
-                             onChange={(e) => setEmail(e.target.value)}
-                             placeholder="chrisyooo@gmail.com"
-                             disabled={!doEdit}
-                             required/>
-            </StyledDiv1>
+                    <StyledLabel htmlFor={"email"}>E-Mail:</StyledLabel>
+                    <StyledInput type="text"
+                                 id="email"
+                                 value={userDetails.email}
+                                 onChange={(e) => setEmail(e.target.value)}
+                                 placeholder="chrisyooo@gmail.com"
+                                 disabled={!doEdit}
+                                 required/>
+
+                </StyledDiv1>
+            </form>
             <StyledDiv2>
                 <StyledButton onClick={toggleDoEdit}>
                     <Icon icon="mdi:edit" inline={true} width="15"/> Bearbeiten
                 </StyledButton>
-                <StyledButton>
+                <StyledButton onClick={putUserDetails}>
                     <Icon icon="mdi:+" inline={true} width="15"/> Speichern
                 </StyledButton>
                 {error && <StyledMessage>{error}</StyledMessage>}

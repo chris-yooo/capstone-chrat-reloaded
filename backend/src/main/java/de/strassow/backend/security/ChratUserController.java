@@ -41,6 +41,14 @@ public class ChratUserController {
         return chratService.getUserDetails(username);
     }
 
+    @PutMapping("/{id}")
+    public ChratUser profileUpdate(@PathVariable String id, @RequestBody ChratUserUpdateDTO chratUserUpdateDTO) {
+        if (!chratUserUpdateDTO.id().equals(id)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The username you want to update not equals to your req Body user.id");
+        }
+        return chratService.updateUserProfile(chratUserUpdateDTO);
+    }
+
     @GetMapping("/login")
     public String login() {
         return "OK";
