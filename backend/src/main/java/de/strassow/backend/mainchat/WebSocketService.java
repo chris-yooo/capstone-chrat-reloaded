@@ -1,6 +1,7 @@
 package de.strassow.backend.mainchat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.strassow.backend.security.ChratService;
 import de.strassow.backend.security.ChratUserToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class WebSocketService extends TextWebSocketHandler {
 
     private final Map<WebSocketSession, String> sessions = new HashMap<>();
     private final MainChatService mainChatService;
+    private final ChratService chratService;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -38,9 +40,9 @@ public class WebSocketService extends TextWebSocketHandler {
 
         if (message.getPayload().contains("id")) {
             ChratUserToken token = objectMapper.readValue(message.getPayload(), ChratUserToken.class);
-            String username = mainChatService.tokenToCompare(token.id());
+            String username = chratService.tokenToCompare(token.id());
             sessions.put(session, username);
-            mainChatService.deleteUserTokenAfterSessionAdd(token.id());
+            chratService.deleteUserTokenAfterSessionAdd(token.id());
 
             for (MainChatMessage mainChatMessage : mainChatService.getMessages()) {
                 session.sendMessage(new TextMessage(mainChatMessage.toString()));
