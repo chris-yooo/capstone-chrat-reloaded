@@ -3,10 +3,10 @@ import styled from "styled-components";
 import useWebSocket, {ReadyState} from 'react-use-websocket';
 import {nanoid} from "nanoid";
 import {Icon} from '@iconify/react';
-import {ChratUserModel} from "./ChratUserModel";
+import {ChratUserTokenModel} from "./ChratUserTokenModel";
 
 type Props = {
-    user: ChratUserModel
+    user: ChratUserTokenModel
 }
 
 type MainChatMessage = {
