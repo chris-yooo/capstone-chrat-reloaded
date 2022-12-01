@@ -2,11 +2,11 @@ import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import LoggedInPage from "./LoggedInPage";
 import LoginPage from './LoginPage';
-import {ChratUserModel} from "./ChratUserModel";
+import {ChratUserTokenModel} from "./ChratUserTokenModel";
 
 export default function App() {
 
-    const [user, setUser] = useState<ChratUserModel>();
+    const [user, setUser] = useState<ChratUserTokenModel>();
 
     const fetchUsername = () => {
         axios.get('/api/chrat-users/me')
