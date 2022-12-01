@@ -25,7 +25,6 @@ public class WebSocketService extends TextWebSocketHandler {
         super.handleTextMessage(session, message);
 
         if (sessions.containsKey(session)) {
-
             MainChatMessage mainChatMessage = mainChatService.addMessage(message.getPayload(), sessions.get(session));
             sessions.forEach((webSocketSession, username) -> {
                 try {
