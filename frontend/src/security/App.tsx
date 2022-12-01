@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
-import LoggedInPage from "./LoggedInPage";
+import LoggedInPage from "../pages/LoggedInPage";
 import LoginPage from './LoginPage';
 import {ChratUserTokenModel} from "./ChratUserTokenModel";
 

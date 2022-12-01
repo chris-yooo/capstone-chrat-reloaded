@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ChratUserTokenModel} from "./ChratUserTokenModel";
+import {ChratUserTokenModel} from "../security/ChratUserTokenModel";
 import {Icon} from "@iconify/react";
 import styled from "styled-components";
 import axios from "axios";
