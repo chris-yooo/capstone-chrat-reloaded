@@ -113,7 +113,7 @@ export default function RegisterPage(props: Props) {
                                  required/>
 
                     <StyledLabel htmlFor={"password"}>Passwort:</StyledLabel>
-                    <StyledInput type='text'
+                    <StyledInput type='password'
                                  id="password"
                                  value={password}
                                  onChange={(e) => setPassword(e.target.value)}
@@ -121,7 +121,7 @@ export default function RegisterPage(props: Props) {
                                  required/>
 
                     <StyledLabel htmlFor={"confirmPassword"}>Passwort nochmal:</StyledLabel>
-                    <StyledInput type='text'
+                    <StyledInput type='password'
                                  id="confirmPassword"
                                  value={confirmPassword}
                                  onChange={(e) => setConfirmPassword(e.target.value)}
