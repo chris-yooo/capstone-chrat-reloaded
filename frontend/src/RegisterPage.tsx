@@ -17,8 +17,9 @@ export default function RegisterPage(props: Props) {
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [failedUsername, setFailedUsername] = useState('')
     const [messageStatus, setMessageStatus] = useState('')
-    const [error, setError] = useState("");
+    const [errorMail, setErrorMail] = useState("");
 
     const register = () => {
         axios.post("/api/chrat-users", {
@@ -29,16 +30,27 @@ export default function RegisterPage(props: Props) {
             email,
         })
             .then((response) => response.status)
-            .catch((error) => {
-                console.log("Error =>" + error)
-            })
             .then((status) => {
                 if (status === 200) {
                     setMessageStatus(username + " erfolreich registriert.");
+                    (setTimeout(() => props.wouldLikeRegister(false), 2000));
+                    (setTimeout(() => login(), 2000));
+                    setUsername("");
+                    setFirstName("");
+                    setLastName("");
+                    setEmail("");
+                    setPassword("");
+                    setConfirmPassword("");
                 }
             })
-            .then(() => setTimeout(() => closeRegisterSite(), 2000))
-            .then(() => setTimeout(() => login(), 2001))
+            .catch((error) => {
+                if (error.response.status === 400) {
+                    setFailedUsername(username + " existiert schon.");
+                    (setTimeout(() => setFailedUsername(""), 5000));
+                    setUsername("");
+                }
+                console.log("Error =>" + error)
+            })
     }
 
     const login = () => {
@@ -51,10 +63,6 @@ export default function RegisterPage(props: Props) {
             .then(props.fetchUsername)
     }
 
-    const closeRegisterSite = () => {
-        props.wouldLikeRegister(false);
-    }
-
     const isValidEmail = (email: string) => {
         return /.@./.test(email);
     }
@@ -62,23 +70,18 @@ export default function RegisterPage(props: Props) {
     const handleRegisterSubmit = (event: any) => {
         event.preventDefault();
         if (!isValidEmail(email)) {
-            setError("Email scheint nicht richtig zu sein :(");
+            setErrorMail("Email scheint nicht richtig zu sein");
+            (setTimeout(() => setErrorMail(""), 5000));
             return;
         } else {
-            setError("");
+            setErrorMail("");
         }
         register();
-        setUsername("");
-        setFirstName("");
-        setLastName("");
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
     }
 
     return <>
         <StyledSection>
-            <StyledForm onSubmit={handleRegisterSubmit}>
+            <form onSubmit={handleRegisterSubmit}>
                 <StyledDiv1>
                     <StyledLabel htmlFor="firstname">Vorname:</StyledLabel>
                     <StyledInput type='text'
@@ -104,6 +107,8 @@ export default function RegisterPage(props: Props) {
                                  placeholder="chrisyooo@gmail.com"
                                  required/>
 
+                    {errorMail && <StyledInputError>{errorMail}</StyledInputError>}
+
                     <StyledLabel htmlFor={"username"}>Username:</StyledLabel>
                     <StyledInput type='text'
                                  id="username"
@@ -111,6 +116,8 @@ export default function RegisterPage(props: Props) {
                                  onChange={(e) => setUsername(e.target.value)}
                                  placeholder="chris_yooo"
                                  required/>
+
+                    {failedUsername && <StyledInputError>{failedUsername}</StyledInputError>}
 
                     <StyledLabel htmlFor={"password"}>Passwort:</StyledLabel>
                     <StyledInput type='password'
@@ -128,30 +135,29 @@ export default function RegisterPage(props: Props) {
                                  placeholder="Bello123!"
                                  required/>
                 </StyledDiv1>
-                <StyledDiv2>
-                    <PasswordChecklist
-                        rules={["minLength", "specialChar", "number", "capital", "match"]}
-                        minLength={8}
-                        value={password}
-                        valueAgain={confirmPassword}
-                        messages={{
-                            minLength: "muss minimum 8 Zeichen enthalten",
-                            match: "muss übereinstimmen",
-                            number: "muss eine Zahl enthalten",
-                            specialChar: "muss ein Sonderzeichen enthalten",
-                            capital: "muss einen Großbuchstaben enthalten"
-                        }}
-                    />
-                </StyledDiv2>
-            </StyledForm>
+            </form>
+            <StyledDiv2>
+                <PasswordChecklist
+                    rules={["minLength", "specialChar", "number", "capital", "match"]}
+                    minLength={8}
+                    value={password}
+                    valueAgain={confirmPassword}
+                    messages={{
+                        minLength: "muss minimum 8 Zeichen enthalten",
+                        match: "muss übereinstimmen",
+                        number: "muss eine Zahl enthalten",
+                        specialChar: "muss ein Sonderzeichen enthalten",
+                        capital: "muss einen Großbuchstaben enthalten"
+                    }}
+                />
+            </StyledDiv2>
             <StyledDiv3>
-                <StyledButton onClick={closeRegisterSite}>
+                <StyledButton onClick={() => props.wouldLikeRegister(false)}>
                     <Icon icon="mdi:x" inline={true} width="15"/> Abbrechen
                 </StyledButton>
                 <StyledButton onClick={handleRegisterSubmit}>
                     <Icon icon="mdi:register" inline={true} width="15"/> Registrieren
                 </StyledButton>
-                {error && <StyledMessage>{error}</StyledMessage>}
                 {messageStatus && <StyledMessage>{messageStatus}</StyledMessage>}
             </StyledDiv3>
         </StyledSection>
@@ -161,7 +167,9 @@ export default function RegisterPage(props: Props) {
 const StyledSection = styled.section`
   display: flex;
   flex-direction: column;
+  align-items: center;
   margin: 10px;
+  width: 70%;
   padding: 8px 20px 25px 20px;
   border: 1px solid rgba(10 10 10 0.3);
   border-radius: 1pc;
@@ -170,8 +178,11 @@ const StyledSection = styled.section`
 `
 
 const StyledDiv1 = styled.div`
+  width: 80%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   margin: 20px;
   padding: 10px;
 `;
@@ -179,8 +190,8 @@ const StyledDiv1 = styled.div`
 const StyledDiv2 = styled.div`
   display: flex;
   justify-content: center;
-  align-self: flex-end;
-  padding: 20px;
+  align-self: center;
+  padding: 10px 20px;
   margin-bottom: 23px;
   font-size: 1.1rem;
 `;
@@ -190,17 +201,18 @@ const StyledDiv3 = styled.div`
   align-self: center;
 `;
 
-const StyledForm = styled.form`
-  display: flex;
-  align-self: center;
-  align-items: center;
-`;
-
 const StyledMessage = styled.p`
   margin: 10px;
   padding: 8px;
   font-size: 0.9rem;
   color: var(--color-text);
+`
+
+const StyledInputError = styled.p`
+  margin: 10px;
+  padding: 8px;
+  font-size: 1rem;
+  color: var(--color-red);
 `
 
 const StyledButton = styled.button`

@@ -2,7 +2,9 @@ package de.strassow.backend.security;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.Optional;
+
 public interface ChratRepository extends MongoRepository<ChratUser, String> {
 
-    ChratUser findByUsername(String username);
+    Optional<ChratUser> findByUsername(String username);
 }

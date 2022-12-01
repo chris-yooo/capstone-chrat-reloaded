@@ -51,28 +51,27 @@ export default function MainChat(props: Props) {
     }
 
     const connectionStatus = {
-        [ReadyState.CONNECTING]: <Icon icon="fluent:plug-connected-20-regular" color="var(--color-yellow)" width="40" />,
+        [ReadyState.CONNECTING]: <Icon icon="fluent:plug-connected-20-regular" color="var(--color-yellow)" width="40"/>,
         [ReadyState.OPEN]: <Icon icon="fluent:plug-connected-20-filled" width="40" color="var(--color-white)"/>,
-        [ReadyState.CLOSING]: <Icon icon="fluent:plug-connected-20-regular" color="var(--color-yellow)" width="40" />,
-        [ReadyState.CLOSED]: <Icon icon="tabler:plug-connected-x" color="var(--color-red)" width="40" />,
-        [ReadyState.UNINSTANTIATED]: <Icon icon="tabler:plug-connected-x" color="var(--color-red)" width="40" />,
+        [ReadyState.CLOSING]: <Icon icon="fluent:plug-connected-20-regular" color="var(--color-yellow)" width="40"/>,
+        [ReadyState.CLOSED]: <Icon icon="tabler:plug-connected-x" color="var(--color-red)" width="40"/>,
+        [ReadyState.UNINSTANTIATED]: <Icon icon="tabler:plug-connected-x" color="var(--color-red)" width="40"/>,
     }[WebSocket.readyState];
 
-
     const messageHistory = MainChatMessages.map((message: MainChatMessage) =>
-            <StyledLi key={nanoid()}>{message.username} {message.datetime}<br/>
-                <strong>{message.message}</strong></StyledLi>
+        <StyledLi key={nanoid()}>{message.username} {message.datetime}<br/>
+            <strong>{message.message}</strong></StyledLi>
     );
 
- console.log(MainChatMessages)
+    console.log(MainChatMessages)
 
     return <>
         <StyledSpan>{connectionStatus}</StyledSpan>
-        <StyledDiv1>
-                <StyledUl>
-                    {messageHistory}
-                </StyledUl>
-            <StyledDiv2>
+        <StyledSection>
+            <StyledUl>
+                {messageHistory}
+            </StyledUl>
+            <StyledDiv1>
                 <StyledInputForm onSubmit={handleMessageSubmit}>
                     <StyledInput
                         disabled={WebSocket.readyState !== ReadyState.OPEN}
@@ -88,10 +87,23 @@ export default function MainChat(props: Props) {
                         <Icon icon="carbon:send-alt" style={{fontSize: '28px'}}/>
                     </StyledInputButton>
                 </StyledInputForm>
-            </StyledDiv2>
-        </StyledDiv1>
+            </StyledDiv1>
+        </StyledSection>
     </>
 }
+
+const StyledSection = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px;
+  width: 90%;
+  padding: 8px 20px 25px 20px;
+  border: 1px solid rgba(10 10 10 0.3);
+  border-radius: 1pc;
+  box-shadow: 0 .0625rem .5rem 0 rgba(0, 0, 0, .5), 0 .0625rem .3125rem 0 rgba(0, 0, 0, .5);
+  background-color: var(--color-background);
+`
 
 const StyledUl = styled.ul`
   height: 65vh;
@@ -102,7 +114,7 @@ const StyledUl = styled.ul`
   @media (max-height: 700px) {
     height: 50vh;
   }
-  
+
   @media (max-height: 500px) {
     height: 40vh;
   }
@@ -118,7 +130,7 @@ const StyledLi = styled.li`
   font-size: 1rem;
   line-height: 18px;
   color: var(--color-text);
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.45);  
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.45);
 `
 
 const StyledSpan = styled.span`
@@ -129,16 +141,7 @@ const StyledSpan = styled.span`
 
 const StyledDiv1 = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-`;
-
-const StyledDiv2 = styled.div`
   text-align: left;
-  display: flex;
-  position: fixed;
-  bottom: 52px;
   justify-content: space-between;
   width: 370px;
   height: 45px;

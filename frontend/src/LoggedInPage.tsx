@@ -25,16 +25,13 @@ export default function LoggedInPage(props: Props) {
 
     return <>
         <StyledHeader>
-            <div></div>
-            <div>
-                <StyledH1>chRat-Reloaded</StyledH1>
-                <StyledH2>der Messenger</StyledH2>
-            </div>
-            <div>
-                <button onClick={() => nlink("/Profile")}>Profile undso</button>
-                <button onClick={() => logout()}>Logout</button>
-            </div>
+            <StyledH1>chRat-Reloaded</StyledH1>
+            <StyledH2>der Messenger</StyledH2>
         </StyledHeader>
+        <aside>
+            <button onClick={() => nlink("/Profile")}>Profile undso</button>
+            <button onClick={() => logout()}>Logout</button>
+        </aside>
         <StyledMain>
             <Routes>
                 <Route path="/" element={<MainChat user={props.user}/>}/>
@@ -58,9 +55,8 @@ const StyledHeader = styled.header`
 `
 
 const StyledMain = styled.main`
-    display: flex;
-    justify-content: center;
-  margin: 0 0 50px 0;
+  display: flex;
+  justify-content: center;
   min-height: 200px;
 `
 
@@ -88,7 +84,6 @@ const StyledH2 = styled.h2`
 const StyledFooter = styled.footer`
   display: flex;
   justify-content: center;
-  margin: 80px 0 0 0;
   padding: 0;
   font-size: 0.8rem;
   font-family: 'Inter', sans-serif;
