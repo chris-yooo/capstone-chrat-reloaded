@@ -1,11 +1,11 @@
 import axios from "axios";
 import {Route, Routes} from "react-router";
 import {useNavigate} from "react-router-dom";
-import MainChat from "./MainChat";
+import MainChat from "../components/MainChat";
 import React from "react";
 import styled from "styled-components";
-import {ChratUserTokenModel} from "./ChratUserTokenModel";
-import Profile from "./Profile";
+import {ChratUserTokenModel} from "../security/ChratUserTokenModel";
+import Profile from "../components/Profile";
 
 type Props = {
     user: ChratUserTokenModel

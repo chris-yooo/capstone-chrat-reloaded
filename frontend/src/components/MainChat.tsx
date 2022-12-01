@@ -3,7 +3,7 @@ import styled from "styled-components";
 import useWebSocket, {ReadyState} from 'react-use-websocket';
 import {nanoid} from "nanoid";
 import {Icon} from '@iconify/react';
-import {ChratUserTokenModel} from "./ChratUserTokenModel";
+import {ChratUserTokenModel} from "../security/ChratUserTokenModel";
 
 type Props = {
     user: ChratUserTokenModel
