@@ -1,4 +1,4 @@
-package de.strassow.backend.mainchat;
+package de.strassow.backend.utils;
 
 import org.springframework.stereotype.Component;
 

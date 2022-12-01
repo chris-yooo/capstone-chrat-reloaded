@@ -17,8 +17,8 @@ public class ChratUserController {
     private final ChratService chratService;
 
     @PostMapping
-    public void createAppUser(@Valid @RequestBody ChratUserDTO chratUserDTO) {
-        chratService.save(chratUserDTO);
+    public void addChratUser(@Valid @RequestBody DtoNewChratUser dtoNewChratUser) {
+        chratService.addChratUser(dtoNewChratUser);
     }
 
     @GetMapping("/me")
@@ -38,15 +38,15 @@ public class ChratUserController {
         if (!usernameFromSession.equals(username)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The username you want to display not equals to your session username");
         }
-        return chratService.getUserDetails(username);
+        return chratService.getChratUserDetails(username);
     }
 
     @PutMapping("/{id}")
-    public ChratUser profileUpdate(@PathVariable String id, @RequestBody ChratUserUpdateDTO chratUserUpdateDTO) {
-        if (!chratUserUpdateDTO.id().equals(id)) {
+    public ChratUser profileUpdate(@PathVariable String id, @RequestBody DtoUpdateChratUser dtoUpdateChratUser) {
+        if (!dtoUpdateChratUser.id().equals(id)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The username you want to update not equals to your req Body user.id");
         }
-        return chratService.updateUserProfile(chratUserUpdateDTO);
+        return chratService.updateUserProfile(dtoUpdateChratUser);
     }
 
     @GetMapping("/login")

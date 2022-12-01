@@ -1,5 +1,6 @@
-package de.strassow.backend.security;
+package de.strassow.backend.utils;
 
+import de.strassow.backend.security.ChratSecurityConfig;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -12,6 +13,6 @@ public class ChratUserUtils {
     }
 
     public String addPasswordBcrypt(String password) {
-        return SecurityConfig.passwordEncoder.encode(password);
+        return ChratSecurityConfig.passwordEncoder.encode(password);
     }
 }

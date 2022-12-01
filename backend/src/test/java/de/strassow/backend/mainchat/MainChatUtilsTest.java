@@ -1,5 +1,6 @@
 package de.strassow.backend.mainchat;
 
+import de.strassow.backend.utils.MainChatUtils;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

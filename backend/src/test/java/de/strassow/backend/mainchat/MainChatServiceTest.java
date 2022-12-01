@@ -1,8 +1,6 @@
 package de.strassow.backend.mainchat;
 
-import de.strassow.backend.security.ChratUserToken;
-import de.strassow.backend.security.ChratUserTokenRepository;
-import de.strassow.backend.security.ChratUserUtils;
+import de.strassow.backend.utils.MainChatUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -15,57 +13,8 @@ class MainChatServiceTest {
 
     MainChatRepository mainChatRepository = mock(MainChatRepository.class);
     MainChatUtils mainChatUtils = mock(MainChatUtils.class);
-    ChratUserTokenRepository chratUserTokenRepository = mock(ChratUserTokenRepository.class);
-    ChratUserUtils chratUserUtils = mock(ChratUserUtils.class);
-    MainChatService mainChatService = new MainChatService(mainChatRepository, mainChatUtils, chratUserTokenRepository, chratUserUtils);
+    MainChatService mainChatService = new MainChatService(mainChatRepository, mainChatUtils);
 
-
-    @Test
-    void chratUserToken() {
-        // given
-        String username = "chris_yooo";
-        String id = "123123123123";
-        ChratUserToken actual = new ChratUserToken(id, username);
-        // when
-        when(chratUserTokenRepository.findByUsername(username)).thenReturn(java.util.Optional.of(actual));
-        when(chratUserUtils.addUUIDasString()).thenReturn(id);
-        ChratUserToken expected = mainChatService.chratUserToken(username);
-        when(chratUserTokenRepository.save(expected)).thenReturn(expected);
-        // then
-        verify(chratUserUtils).addUUIDasString();
-        verify(chratUserTokenRepository).save(expected);
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void deleteUserTokenAfterSessionAdd() {
-        // given
-        String id = "123123123123";
-        String username = "chris_yooo";
-        when(chratUserTokenRepository.findById(id)).thenReturn(java.util.Optional.of(new ChratUserToken(id, username)));
-        mainChatService.deleteUserTokenAfterSessionAdd(id);
-        assertEquals(0, mainChatService.chratUserTokenRepository.count());
-    }
-
-    @Test
-    void tokenToCompare() {
-        // given
-        String id = "123123123123";
-        String username = "chris_yooo";
-        when(chratUserTokenRepository.findById(id)).thenReturn(java.util.Optional.of(new ChratUserToken(id, username)));
-        assertEquals(username, mainChatService.tokenToCompare(id));
-    }
-
-    @Test
-    void chratUserTokenAnonymousUser() {
-        // given
-        String username = "anonymousUser";
-        // when
-        ChratUserToken expected = mainChatService.chratUserToken(username);
-        ChratUserToken actual = new ChratUserToken("", "anonymousUser");
-        // then
-        assertEquals(expected, actual);
-    }
 
     @Test
     void addMessage() {

@@ -1,5 +1,6 @@
 package de.strassow.backend.security;
 
+import de.strassow.backend.utils.ChratUserUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -24,7 +25,7 @@ class ChratUserUtilsTest {
     void addPasswordBcrypt() {
         //given
         String password = "password";
-        String passwordString = SecurityConfig.passwordEncoder.encode(password);
+        String passwordString = ChratSecurityConfig.passwordEncoder.encode(password);
         //when
         String actual = chratUserUtils.addPasswordBcrypt(password);
         //then
