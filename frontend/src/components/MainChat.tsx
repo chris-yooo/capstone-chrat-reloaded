@@ -63,8 +63,6 @@ export default function MainChat(props: Props) {
             <strong>{message.message}</strong></StyledLi>
     );
 
-    console.log(MainChatMessages)
-
     return <>
         <StyledSpan>{connectionStatus}</StyledSpan>
         <StyledSection>
