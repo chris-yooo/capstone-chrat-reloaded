@@ -106,17 +106,37 @@ class ChratServiceTest {
     }
 
     @Test
-    void updateChratUserExceptionThrow() {
-        DtoUpdateChratUser chratUserDto = new DtoUpdateChratUser("1", "chris_yooo", "Chris", "Yoo", "fsagfg@gmail.com");
+    void updateChratUserException() {
+        String notFound = "User not found";
+        String message = null;
+        DtoUpdateChratUser chratUserDto = new DtoUpdateChratUser("1", "chris_yo", "Chris", "Yoo", "fsagfg@gmail.com");
         //when
-        String message = "Username already exists";
+        when(chratRepository.findByUsername(chratUserDto.username())).thenReturn(Optional.empty());
+        when(chratRepository.findById(chratUserDto.id())).thenReturn(Optional.empty());
         try {
-            chratRepository.findByUsername(chratUserDto.username());
-        } catch (ResponseStatusException e) {
-            message = e.getReason();
+            chratService.updateUserProfile(chratUserDto);
+        } catch (RuntimeException e) {
+            message = e.getMessage();
         }
         //then
-        assertEquals("Username already exists", message);
+        assertEquals(notFound, message);
+    }
+
+    @Test
+    void updateChratUserIf() {
+        String badRequest = "400 BAD_REQUEST \"Username already exists\"";
+        String message = null;
+        DtoUpdateChratUser chratUserDto = new DtoUpdateChratUser("1", "chris_yo", "Chris", "Yoo", "fsagfg@gmail.com");
+        //when
+        when(chratRepository.findByUsername(chratUserDto.username())).thenReturn(Optional.of(new ChratUser("1", "chris_yo", "ASDASDASD", "Yoo", "fsagfg@gmail.com", "fsagfg@gmail.com")));
+        when(chratRepository.findById(chratUserDto.id())).thenReturn(Optional.empty());
+        try {
+            chratService.updateUserProfile(chratUserDto);
+        } catch (ResponseStatusException e) {
+            message = e.getMessage();
+        }
+        //then
+        assertEquals(badRequest, message);
     }
 
     @Test
