@@ -37,6 +37,16 @@ export default function Profile(props: Props) {
             .then(setUserDetails)
     }
 
+
+
+    useEffect(() => {
+        setId(userDetails.id);
+        setUsername(userDetails.username);
+        setFirstName(userDetails.firstName);
+        setLastName(userDetails.lastName);
+        setEmail(userDetails.email);
+    }, [userDetails]);
+
     const updateUserDetails = () => {
         axios.put("/api/chrat-users/" + id, {
             id,
@@ -50,7 +60,6 @@ export default function Profile(props: Props) {
                     setMessageStatus("Erfolreich geändert");
                     (setTimeout(() => setMessageStatus(""), 2000));
                     setDoEdit(false);
-                    getUserDetails();
                 }
             })
             .catch((error) => {
@@ -62,15 +71,7 @@ export default function Profile(props: Props) {
             })
     }
 
-    useEffect(getUserDetails, []);
-
-    useEffect(() => {
-        setId(userDetails.id);
-        setUsername(userDetails.username);
-        setFirstName(userDetails.firstName);
-        setLastName(userDetails.lastName);
-        setEmail(userDetails.email);
-    }, [userDetails]);
+    useEffect(getUserDetails, [setDoEdit]);
 
     const toggleDoEdit = () => {
         setDoEdit(!doEdit);
