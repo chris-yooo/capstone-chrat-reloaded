@@ -63,6 +63,24 @@ class ChratServiceTest {
     }
 
     @Test
+    void getChratUseraddChratUserException() {
+        //given
+        ChratUser chratUser = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
+        DtoNewChratUser dtoNewChratUserWithoutId = new DtoNewChratUser("chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
+        //when
+        when(chratRepository.findByUsername(dtoNewChratUserWithoutId.username())).thenReturn(Optional.of(new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com")));
+        String message = null;
+        try {
+            chratService.addChratUser(dtoNewChratUserWithoutId);
+        } catch (ResponseStatusException e) {
+            message = e.getReason();
+        }
+        //then
+        verify(chratRepository).findByUsername(chratUser.username());
+        assertEquals("User not found", message);
+    }
+
+    @Test
     void getChratUserDetailsOK() {
         //given
         ChratUser chratUserComplete = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
@@ -80,9 +98,9 @@ class ChratServiceTest {
         ChratUser chratUser = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
         //when
         when(chratRepository.findByUsername(chratUser.username())).thenReturn(Optional.empty());
-        String message = "User not found";
+        String message = null;
         try {
-            chratRepository.findByUsername(chratUser.username());
+            chratService.getChratUserDetails(chratUser.username());
         } catch (ResponseStatusException e) {
             message = e.getReason();
         }
