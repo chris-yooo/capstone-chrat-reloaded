@@ -19,15 +19,17 @@ type ChratUserModel = {
 
 export default function Profile(props: Props) {
 
-    const [username, setUsername] = useState("");
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
-    const [messageStatus, setMessageStatus] = useState('')
-    const [error, setError] = useState("");
-    const [doEdit, setDoEdit] = useState(false);
     const [userDetails, setUserDetails] = React.useState<ChratUserModel>
     ({id: "", username: "", password: "", firstName: "", lastName: "", email: ""});
+    const [id, setId] = useState(userDetails.id);
+    const [username, setUsername] = useState(userDetails.username);
+    const [firstName, setFirstName] = useState(userDetails.firstName);
+    const [lastName, setLastName] = useState(userDetails.lastName);
+    const [email, setEmail] = useState(userDetails.email);
+    const [messageStatus, setMessageStatus] = useState("")
+    const [error, setError] = useState("");
+    const [doEdit, setDoEdit] = useState(false);
+    const [errorMail, setErrorMail] = useState("");
 
     const getUserDetails = () => {
         axios.get("/api/chrat-users/" + props.user.username)
@@ -35,9 +37,9 @@ export default function Profile(props: Props) {
             .then(setUserDetails)
     }
 
-    const putUserDetails = () => {
-        axios.put("/api/chrat-users/" + props.user.username, {
-            username,
+    const updateUserDetails = () => {
+        axios.put("/api/chrat-users/" + id, {
+            id,
             firstName,
             lastName,
             email,
@@ -45,7 +47,7 @@ export default function Profile(props: Props) {
             .then((response) => response.status)
             .then((status) => {
                 if (status === 200) {
-                    setMessageStatus("Erfolreich geändert.");
+                    setMessageStatus("Erfolreich geändert");
                     (setTimeout(() => setMessageStatus(""), 2000));
                     setDoEdit(false);
                     getUserDetails();
@@ -53,36 +55,58 @@ export default function Profile(props: Props) {
             })
             .catch((error) => {
                 if (error.response.status === 400) {
-                    setError("Fehler beim Ändern.");
+                    setError("Fehler beim Ändern");
                     (setTimeout(() => setError(""), 5000));
                 }
                 console.log("Error =>" + error)
             })
     }
 
-    useEffect(getUserDetails, [])
+    useEffect(getUserDetails, []);
+
+    useEffect(() => {
+        setId(userDetails.id);
+        setUsername(userDetails.username);
+        setFirstName(userDetails.firstName);
+        setLastName(userDetails.lastName);
+        setEmail(userDetails.email);
+    }, [userDetails]);
 
     const toggleDoEdit = () => {
         setDoEdit(!doEdit);
     }
 
+    const isValidEmail = (email: string) => {
+        return /.@./.test(email);
+    }
+
+    const handleUpdateUserDetails = (event: any) => {
+        event.preventDefault();
+        if (!isValidEmail(email)) {
+            setErrorMail("Email scheint nicht richtig zu sein");
+            (setTimeout(() => setErrorMail(""), 5000));
+            return;
+        } else {
+            setErrorMail("");
+        }
+        updateUserDetails();
+    }
+
     return <>
         <StyledSection>
-            <form onSubmit={putUserDetails}>
+            <form onSubmit={handleUpdateUserDetails}>
                 <StyledDiv1>
-                    <StyledLabel htmlFor={"username"}>Username:</StyledLabel>
-                    <StyledInput type="tex"
+                    <StyledLabel htmlFor="username">Username:</StyledLabel>
+                    <StyledInput type="text"
                                  id="username"
-                                 value={userDetails.username}
-                                 onChange={(e) => setUsername(e.target.value)}
-                                 placeholder="chris_yooo"
-                                 disabled={!doEdit}
+                                 value={username}
+                                 disabled={true}
                                  required/>
 
                     <StyledLabel htmlFor="firstname">Vorname:</StyledLabel>
                     <StyledInput type="text"
                                  id="firstname"
-                                 value={userDetails.firstName}
+                                 value={firstName}
                                  onChange={(e) => setFirstName(e.target.value)}
                                  placeholder={"Chris"}
                                  disabled={!doEdit}
@@ -91,7 +115,7 @@ export default function Profile(props: Props) {
                     <StyledLabel htmlFor={"lastname"}>Nachname:</StyledLabel>
                     <StyledInput type="text"
                                  id="lastname"
-                                 value={userDetails.lastName}
+                                 value={lastName}
                                  onChange={(e) => setLastName(e.target.value)}
                                  placeholder="Yoo"
                                  disabled={!doEdit}
@@ -100,11 +124,13 @@ export default function Profile(props: Props) {
                     <StyledLabel htmlFor={"email"}>E-Mail:</StyledLabel>
                     <StyledInput type="text"
                                  id="email"
-                                 value={userDetails.email}
+                                 value={email}
                                  onChange={(e) => setEmail(e.target.value)}
                                  placeholder="chrisyooo@gmail.com"
                                  disabled={!doEdit}
                                  required/>
+
+                    {errorMail && <StyledErrorMessage>{errorMail}</StyledErrorMessage>}
 
                 </StyledDiv1>
             </form>
@@ -112,10 +138,10 @@ export default function Profile(props: Props) {
                 <StyledButton onClick={toggleDoEdit}>
                     <Icon icon="mdi:edit" inline={true} width="15"/> Bearbeiten
                 </StyledButton>
-                <StyledButton onClick={putUserDetails}>
+                <StyledButton onClick={handleUpdateUserDetails}>
                     <Icon icon="mdi:+" inline={true} width="15"/> Speichern
                 </StyledButton>
-                {error && <StyledMessage>{error}</StyledMessage>}
+                {error && <StyledErrorMessage>{error}</StyledErrorMessage>}
                 {messageStatus && <StyledMessage>{messageStatus}</StyledMessage>}
             </StyledDiv2>
         </StyledSection>
@@ -157,8 +183,15 @@ const StyledDiv2 = styled.div`
 const StyledMessage = styled.p`
   margin: 10px;
   padding: 8px;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--color-text);
+`
+
+const StyledErrorMessage = styled.p`
+  margin: 10px;
+  padding: 8px;
+  font-size: 1rem;
+  color: var(--color-red);
 `
 
 const StyledButton = styled.button`
@@ -203,7 +236,7 @@ const StyledInput = styled.input`
 
 const StyledLabel = styled.label`
   font-family: 'Inter', sans-serif;
-  width: 150px;
+  min-width: 310px;
   height: 22px;
   font-style: normal;
   font-weight: 400;
