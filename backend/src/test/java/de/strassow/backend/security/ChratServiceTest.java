@@ -112,10 +112,9 @@ class ChratServiceTest {
     @Test
     void updateChratUserOK() {
         ChratUser chratUserOld = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
-        ChratUser chratUserNew = new ChratUser("1", "chris_yo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
-        DtoUpdateChratUser chratUserDto = new DtoUpdateChratUser("1", "chris_yo", "Chris", "Yoo", "fsagfg@gmail.com");
+        ChratUser chratUserNew = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
+        DtoUpdateChratUser chratUserDto = new DtoUpdateChratUser("1", "Chris", "Yoo", "fsagfg@gmail.com");
         //when
-        when(chratRepository.findByUsername(chratUserDto.username())).thenReturn(Optional.empty());
         when(chratRepository.findById(chratUserDto.id())).thenReturn(Optional.of(chratUserOld));
         when(chratRepository.save(chratUserNew)).thenReturn(chratUserNew);
         ChratUser actual = chratService.updateUserProfile(chratUserDto);
@@ -127,9 +126,8 @@ class ChratServiceTest {
     void updateChratUserException() {
         String notFound = "User not found";
         String message = null;
-        DtoUpdateChratUser chratUserDto = new DtoUpdateChratUser("1", "chris_yo", "Chris", "Yoo", "fsagfg@gmail.com");
+        DtoUpdateChratUser chratUserDto = new DtoUpdateChratUser("1", "Chris", "Yoo", "fsagfg@gmail.com");
         //when
-        when(chratRepository.findByUsername(chratUserDto.username())).thenReturn(Optional.empty());
         when(chratRepository.findById(chratUserDto.id())).thenReturn(Optional.empty());
         try {
             chratService.updateUserProfile(chratUserDto);
@@ -138,23 +136,6 @@ class ChratServiceTest {
         }
         //then
         assertEquals(notFound, message);
-    }
-
-    @Test
-    void updateChratUserIf() {
-        String badRequest = "400 BAD_REQUEST \"Username already exists\"";
-        String message = null;
-        DtoUpdateChratUser chratUserDto = new DtoUpdateChratUser("1", "chris_yo", "Chris", "Yoo", "fsagfg@gmail.com");
-        //when
-        when(chratRepository.findByUsername(chratUserDto.username())).thenReturn(Optional.of(new ChratUser("1", "chris_yo", "ASDASDASD", "Yoo", "fsagfg@gmail.com", "fsagfg@gmail.com")));
-        when(chratRepository.findById(chratUserDto.id())).thenReturn(Optional.empty());
-        try {
-            chratService.updateUserProfile(chratUserDto);
-        } catch (ResponseStatusException e) {
-            message = e.getMessage();
-        }
-        //then
-        assertEquals(badRequest, message);
     }
 
     @Test

@@ -17,8 +17,8 @@ public class ChratUserController {
     private final ChratService chratService;
 
     @PostMapping
-    public void addChratUser(@Valid @RequestBody DtoNewChratUser dtoNewChratUser) {
-        chratService.addChratUser(dtoNewChratUser);
+    public ChratUser addChratUser(@Valid @RequestBody DtoNewChratUser dtoNewChratUser) {
+        return chratService.addChratUser(dtoNewChratUser);
     }
 
     @GetMapping("/me")
