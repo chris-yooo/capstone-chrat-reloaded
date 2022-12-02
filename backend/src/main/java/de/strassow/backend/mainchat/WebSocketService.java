@@ -49,7 +49,6 @@ public class WebSocketService extends TextWebSocketHandler {
             }
             return;
         }
-
         session.sendMessage(new TextMessage("Token is not valid"));
     }
 

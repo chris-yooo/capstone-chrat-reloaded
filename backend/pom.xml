@@ -20,7 +20,7 @@
         <java.version>19</java.version>
         <sonar.organization>chris-yooo</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.exclusions>**/BackendApplication*.java,**/WebSocketService*.java,**/SecurityConfig.java,**/MainChatMessage.java</sonar.exclusions>
+        <sonar.exclusions>**/BackendApplication*.java,**/WebSocketService*.java,**/ChratSecurityConfig.java,**/MainChatMessage.java,**/DtoUpdateChratUser.java</sonar.exclusions>
     </properties>
 
     <dependencies>

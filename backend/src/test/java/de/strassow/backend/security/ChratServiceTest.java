@@ -22,8 +22,7 @@ class ChratServiceTest {
         ChratUser chratUser = new ChratUser("1", "chris_yooo", "Yoo", "Chris", "Yoo", "fsagfg@gmail.com");
         //WHEN
         when(chratRepository.findByUsername("chris_yooo")).thenReturn(Optional.of(chratUser));
-        Optional<ChratUser> actual = null;
-        actual = chratRepository.findByUsername(chratUser.username());
+        Optional<ChratUser> actual = chratRepository.findByUsername(chratUser.username());
         verify(chratRepository).findByUsername(chratUser.username());
         //THEN
         assertEquals(chratUser, actual.get());
@@ -94,10 +93,42 @@ class ChratServiceTest {
 
     @Test
     void updateChratUserOK() {
+        ChratUser chratUserOld = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
+        ChratUser chratUserNew = new ChratUser("1", "chris_yo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
+        DtoUpdateChratUser chratUserDto = new DtoUpdateChratUser("1", "chris_yo", "Chris", "Yoo", "fsagfg@gmail.com");
+        //when
+        when(chratRepository.findById(chratUserOld.id())).thenReturn(Optional.of(chratUserOld));
+        when(chratRepository.save(chratUserNew)).thenReturn(chratUserNew);
+        ChratUser actual = chratService.updateUserProfile(chratUserDto);
+        //then
+        assertEquals(chratUserNew, actual);
     }
 
     @Test
     void updateChratUserException() {
+        ChratUser chratUserOld = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
+        DtoUpdateChratUser chratUserDto = new DtoUpdateChratUser("1", "chris_yooo", "Chris", "Yoo", "fsagfg@gmail.com");
+        //when
+        when(chratRepository.findByUsername(chratUserDto.username())).thenReturn(Optional.of(chratUserOld));
+        String message = "Username already exists";
+        try {
+            chratRepository.findByUsername(chratUserDto.username());
+        } catch (ResponseStatusException e) {
+            message = e.getReason();
+        }
+        //then
+        assertEquals("Username already exists", message);
+    }
+
+    @Test
+    void chratUserTokenAnonymousUser() {
+        // given
+        String username = "anonymousUser";
+        // when
+        ChratUserToken expected = chratService.chratUserToken(username);
+        ChratUserToken actual = new ChratUserToken("", "anonymousUser");
+        // then
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -113,17 +144,6 @@ class ChratServiceTest {
         // then
         verify(chratUserUtils).addUUIDasString();
         verify(chratUserTokenRepository).save(expected);
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void chratUserTokenAnonymousUser() {
-        // given
-        String username = "anonymousUser";
-        // when
-        ChratUserToken expected = chratService.chratUserToken(username);
-        ChratUserToken actual = new ChratUserToken("", "anonymousUser");
-        // then
         assertEquals(expected, actual);
     }
 
