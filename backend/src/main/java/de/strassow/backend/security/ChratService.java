@@ -50,19 +50,18 @@ public class ChratService {
     public ChratUser updateUserProfile(DtoUpdateChratUser dtoUpdateChratUser) throws ResponseStatusException {
         if (chratRepository.findByUsername(dtoUpdateChratUser.username()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exists");
-        } else {
-            ChratUser chratUser = chratRepository.findById(dtoUpdateChratUser.id())
-                    .orElseThrow(() -> new RuntimeException(notFound));
-            ChratUser updatedChratUser = new ChratUser(
-                    chratUser.id(),
-                    dtoUpdateChratUser.username(),
-                    chratUser.passwordBcrypt(),
-                    dtoUpdateChratUser.firstName(),
-                    dtoUpdateChratUser.lastName(),
-                    dtoUpdateChratUser.email()
-            );
-            return chratRepository.save(updatedChratUser);
         }
+        ChratUser chratUser = chratRepository.findById(dtoUpdateChratUser.id())
+                .orElseThrow(() -> new RuntimeException(notFound));
+        ChratUser updatedChratUser = new ChratUser(
+                chratUser.id(),
+                dtoUpdateChratUser.username(),
+                chratUser.passwordBcrypt(),
+                dtoUpdateChratUser.firstName(),
+                dtoUpdateChratUser.lastName(),
+                dtoUpdateChratUser.email()
+        );
+        return chratRepository.save(updatedChratUser);
     }
 
     public ChratUserToken chratUserToken(String username) {
