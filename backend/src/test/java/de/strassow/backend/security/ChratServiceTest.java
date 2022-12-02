@@ -160,11 +160,11 @@ class ChratServiceTest {
         // given
         String username = "chris_yooo";
         String id = "123123123123";
-        ChratUserToken actual = new ChratUserToken(id, username);
         // when
+        ChratUserToken expected = new ChratUserToken(id, username);
         when(chratUserUtils.addUUIDasString()).thenReturn(id);
-        ChratUserToken expected = chratService.chratUserToken(username);
         when(chratUserTokenRepository.save(expected)).thenReturn(expected);
+        ChratUserToken actual = chratService.chratUserToken(username);
         // then
         verify(chratUserUtils).addUUIDasString();
         verify(chratUserTokenRepository).save(expected);
