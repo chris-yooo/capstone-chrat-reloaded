@@ -62,6 +62,9 @@ public class ChratService {
     }
 
     public ChratUserToken chratUserToken(String username) {
+        if (chratUserTokenRepository.findByUsername(username)) {
+            chratUserTokenRepository.deleteByUsername(username);
+        }
         if (Objects.equals(username, "anonymousUser")) {
             return new ChratUserToken("", "anonymousUser");
         }

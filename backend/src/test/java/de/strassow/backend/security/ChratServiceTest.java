@@ -145,12 +145,29 @@ class ChratServiceTest {
     }
 
     @Test
+    void chratUserTokenDeleteIfExists() {
+        // given
+        String username = "chris_yooo";
+        String id = "123123123123";
+        // when
+        ChratUserToken expected = new ChratUserToken(id, username);
+        when(chratUserUtils.addUUIDasString()).thenReturn(id);
+        when(chratUserTokenRepository.findByUsername(username)).thenReturn(true);
+        when(chratUserTokenRepository.deleteByUsername(username)).thenReturn(expected);
+        when(chratUserTokenRepository.save(expected)).thenReturn(expected);
+        chratService.chratUserToken(username);
+        ChratUserToken actual = chratService.chratUserToken(username);
+        // then
+        assertEquals(expected, actual);
+    }
+
+    @Test
     void chratUserTokenAnonymousUser() {
         // given
         String username = "anonymousUser";
         // when
         ChratUserToken expected = chratService.chratUserToken(username);
-        ChratUserToken actual = new ChratUserToken("", "anonymousUser");
+        ChratUserToken actual = new ChratUserToken("", username);
         // then
         assertEquals(expected, actual);
     }
@@ -163,6 +180,7 @@ class ChratServiceTest {
         // when
         ChratUserToken expected = new ChratUserToken(id, username);
         when(chratUserUtils.addUUIDasString()).thenReturn(id);
+        when(chratUserTokenRepository.findByUsername(username)).thenReturn(false);
         when(chratUserTokenRepository.save(expected)).thenReturn(expected);
         ChratUserToken actual = chratService.chratUserToken(username);
         // then
