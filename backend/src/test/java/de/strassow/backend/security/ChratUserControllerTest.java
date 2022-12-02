@@ -123,7 +123,7 @@ class ChratUserControllerTest {
     @WithMockUser
     void getChratUser() throws Exception {
 
-      String content = mvc.perform(MockMvcRequestBuilders.post("/api/chrat-users")
+        String content = mvc.perform(MockMvcRequestBuilders.post("/api/chrat-users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"username": "user",
@@ -133,7 +133,7 @@ class ChratUserControllerTest {
                                 "password": "SuperSecret344$$"}
                                 """))
                 .andExpect(status().isOk())
-              .andReturn().getResponse().getContentAsString();
+                .andReturn().getResponse().getContentAsString();
 
         ChratUser chratUser = objectMapper.readValue(content, ChratUser.class);
 
@@ -158,9 +158,37 @@ class ChratUserControllerTest {
     @DirtiesContext
     @Test
     @WithMockUser
+    void getChratUserWithFalseUser() throws Exception {
+
+        mvc.perform(MockMvcRequestBuilders.post("/api/chrat-users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"username": "user",
+                                "firstName": "det",
+                                "lastName": "lev",
+                                "email": "test@gmail.com",
+                                "password": "SuperSecret344$$"}
+                                """))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/login")
+                        .header("Authorization", "Basic " + base64ClientCredentials)
+                        .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isOk()).andExpect(content().string("OK"));
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/asd")
+                        .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isUnauthorized());
+    }
+
+
+    @DirtiesContext
+    @Test
+    @WithMockUser
     void updateChratUser() throws Exception {
 
-        String content =  mvc.perform(MockMvcRequestBuilders.post("/api/chrat-users")
+        String content = mvc.perform(MockMvcRequestBuilders.post("/api/chrat-users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"username": "user",
@@ -196,15 +224,15 @@ class ChratUserControllerTest {
                         """.replace("<id>", chratUser.id())));
 
         mvc.perform(MockMvcRequestBuilders.put("/api/chrat-users/" + chratUser.id())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                "id": "<id>",
-                                "firstName": "det",
-                                "lastName": "lev",
-                                "email": "test@gmail.de"
-                                }
-                                """.replace("<id>", chratUser.id())));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                        "id": "<id>",
+                        "firstName": "det",
+                        "lastName": "lev",
+                        "email": "test@gmail.de"
+                        }
+                        """.replace("<id>", chratUser.id())));
 
 
         mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/user")
@@ -218,5 +246,57 @@ class ChratUserControllerTest {
                                                     "email": "test@gmail.de"
                                                     }
                         """.replace("<id>", chratUser.id())));
+    }
+
+    @DirtiesContext
+    @Test
+    @WithMockUser
+    void updateChratUserWithFalseId() throws Exception {
+
+        String content = mvc.perform(MockMvcRequestBuilders.post("/api/chrat-users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"username": "user",
+                                "firstName": "det",
+                                "lastName": "lev",
+                                "email": "test@gmail.com",
+                                "password": "SuperSecret344$$"}
+                                """))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        ChratUser chratUser = objectMapper.readValue(content, ChratUser.class);
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/login")
+                        .header("Authorization", "Basic " + base64ClientCredentials)
+                        .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isOk()).andExpect(content().string("OK"));
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/me")
+                        .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isOk());
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/user")
+                        .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isOk()).andExpect(content().json("""
+                                                    {
+                                                    "id": "<id>",
+                                                    "username": "user",
+                                                    "firstName": "det",
+                                                    "lastName": "lev",
+                                                    "email": "test@gmail.com"
+                                                    }
+                        """.replace("<id>", chratUser.id())));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/chrat-users/" + chratUser.id())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                        "id": "123123123123",
+                        "firstName": "det",
+                        "lastName": "lev",
+                        "email": "test@gmail.de"
+                        }
+                        """)).andExpect(status().isBadRequest());
     }
 }

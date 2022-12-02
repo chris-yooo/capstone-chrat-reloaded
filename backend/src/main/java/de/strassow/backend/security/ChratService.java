@@ -20,7 +20,7 @@ public class ChratService {
 
     String notFound = "User not found";
 
-    ChratUser findByUsername(String username) throws ResponseStatusException {
+    ChratUser getChratUser(String username) throws ResponseStatusException {
         return chratRepository.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, notFound));
     }

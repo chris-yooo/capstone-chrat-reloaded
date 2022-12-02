@@ -21,7 +21,7 @@ class ChratServiceTest {
         //GIVEN
         ChratUser chratUser = new ChratUser("1", "chris_yooo", "Yoo", "Chris", "Yoo", "fsagfg@gmail.com");
         //WHEN
-        when(chratRepository.findByUsername("chris_yooo")).thenReturn(Optional.of(chratUser));
+        when(chratRepository.findByUsername(chratUser.username())).thenReturn(Optional.of(chratUser));
         Optional<ChratUser> actual = chratRepository.findByUsername(chratUser.username());
         verify(chratRepository).findByUsername(chratUser.username());
         //THEN
@@ -33,10 +33,10 @@ class ChratServiceTest {
         //GIVEN
         ChratUser chratUser = new ChratUser("1", "chris_yooo", "Yoo", "Chris", "Yoo", "fsagfg@gmail.com");
         //WHEN
-        when(chratRepository.findByUsername("chris_yooo")).thenReturn(Optional.empty());
-        String message = "User not found";
+        when(chratRepository.findByUsername(chratUser.username())).thenReturn(Optional.empty());
+        String message = null;
         try {
-            chratRepository.findByUsername(chratUser.username());
+            chratService.getChratUser(chratUser.username());
         } catch (ResponseStatusException e) {
             message = e.getReason();
         }
