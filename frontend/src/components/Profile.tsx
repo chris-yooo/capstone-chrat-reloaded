@@ -141,9 +141,9 @@ export default function Profile(props: Props) {
                 <StyledButton onClick={handleUpdateUserDetails}>
                     <Icon icon="mdi:+" inline={true} width="15"/> Speichern
                 </StyledButton>
-                {error && <StyledErrorMessage>{error}</StyledErrorMessage>}
-                {messageStatus && <StyledMessage>{messageStatus}</StyledMessage>}
             </StyledDiv2>
+            {error && <StyledErrorMessage>{error}</StyledErrorMessage>}
+            {messageStatus && <StyledMessage>{messageStatus}</StyledMessage>}
         </StyledSection>
     </>;
 }
