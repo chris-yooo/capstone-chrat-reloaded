@@ -119,7 +119,6 @@ class ChratServiceTest {
         assertEquals("Username already exists", message);
     }
 
-
     @Test
     void chratUserTokenAnonymousUser() {
         // given
