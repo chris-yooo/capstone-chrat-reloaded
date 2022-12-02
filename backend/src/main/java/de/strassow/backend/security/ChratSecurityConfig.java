@@ -46,7 +46,7 @@ public class ChratSecurityConfig {
         return new UserDetailsManager() {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                ChratUser userByName = chratService.findByUsername(username);
+                ChratUser userByName = chratService.getChratUser(username);
                 if (userByName == null) {
                     throw new UsernameNotFoundException("Username not found");
                 }
