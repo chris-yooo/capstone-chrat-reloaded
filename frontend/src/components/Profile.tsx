@@ -37,8 +37,6 @@ export default function Profile(props: Props) {
             .then(setUserDetails)
     }
 
-
-
     useEffect(() => {
         setId(userDetails.id);
         setUsername(userDetails.username);
@@ -46,6 +44,8 @@ export default function Profile(props: Props) {
         setLastName(userDetails.lastName);
         setEmail(userDetails.email);
     }, [userDetails]);
+
+    useEffect(getUserDetails, [props.user.username]);
 
     const updateUserDetails = () => {
         axios.put("/api/chrat-users/" + id, {
@@ -70,8 +70,6 @@ export default function Profile(props: Props) {
                 console.log("Error =>" + error)
             })
     }
-
-    useEffect(getUserDetails, [setDoEdit]);
 
     const toggleDoEdit = () => {
         setDoEdit(!doEdit);
