@@ -19,13 +19,19 @@ class ChratServiceTest {
     @Test
     void getChratUserOK() {
         //GIVEN
-        ChratUser chratUser = new ChratUser("1", "chris_yooo", "Yoo", "Chris", "Yoo", "fsagfg@gmail.com");
+        ChratUser chratUser = new ChratUser("1", "chris_yooo", "Yoooo", "Chris", "Yoo", "fsagfg@gmail.com");
+        DtoNewChratUser dtoNewChratUser = new DtoNewChratUser("chris_yooo", "Yoo", "Chris", "Yoo", "fsagfg@gmail.com");
+
         //WHEN
-        when(chratRepository.findByUsername(chratUser.username())).thenReturn(Optional.of(chratUser));
-        Optional<ChratUser> actual = chratRepository.findByUsername(chratUser.username());
+        when(chratRepository.findByUsername(chratUser.username())).thenReturn(Optional.empty());
+        when(chratUserUtils.addPasswordBcrypt(dtoNewChratUser.password())).thenReturn("Yoooo");
+        when(chratUserUtils.addUUIDasString()).thenReturn("1");
+        ChratUser actual = chratService.addChratUser(dtoNewChratUser);
         verify(chratRepository).findByUsername(chratUser.username());
+        verify(chratUserUtils).addPasswordBcrypt(dtoNewChratUser.password());
+        verify(chratUserUtils).addUUIDasString();
         //THEN
-        assertEquals(chratUser, actual.get());
+        assertEquals(chratUser, actual);
     }
 
     @Test
