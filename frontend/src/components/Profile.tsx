@@ -68,7 +68,7 @@ export default function Profile(props: Props) {
 
     return <>
         <StyledSection>
-            <form onClick={toggleDoEdit}>
+            <form onSubmit={putUserDetails}>
                 <StyledDiv1>
                     <StyledLabel htmlFor={"username"}>Username:</StyledLabel>
                     <StyledInput type="tex"
