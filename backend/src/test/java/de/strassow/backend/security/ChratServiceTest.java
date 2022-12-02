@@ -97,7 +97,8 @@ class ChratServiceTest {
         ChratUser chratUserNew = new ChratUser("1", "chris_yo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
         DtoUpdateChratUser chratUserDto = new DtoUpdateChratUser("1", "chris_yo", "Chris", "Yoo", "fsagfg@gmail.com");
         //when
-        when(chratRepository.findById(chratUserOld.id())).thenReturn(Optional.of(chratUserOld));
+        when(chratRepository.findByUsername(chratUserDto.username())).thenReturn(Optional.empty());
+        when(chratRepository.findById(chratUserDto.id())).thenReturn(Optional.of(chratUserOld));
         when(chratRepository.save(chratUserNew)).thenReturn(chratUserNew);
         ChratUser actual = chratService.updateUserProfile(chratUserDto);
         //then
@@ -105,11 +106,9 @@ class ChratServiceTest {
     }
 
     @Test
-    void updateChratUserException() {
-        ChratUser chratUserOld = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
+    void updateChratUserExceptionThrow() {
         DtoUpdateChratUser chratUserDto = new DtoUpdateChratUser("1", "chris_yooo", "Chris", "Yoo", "fsagfg@gmail.com");
         //when
-        when(chratRepository.findByUsername(chratUserDto.username())).thenReturn(Optional.of(chratUserOld));
         String message = "Username already exists";
         try {
             chratRepository.findByUsername(chratUserDto.username());
@@ -119,6 +118,7 @@ class ChratServiceTest {
         //then
         assertEquals("Username already exists", message);
     }
+
 
     @Test
     void chratUserTokenAnonymousUser() {
