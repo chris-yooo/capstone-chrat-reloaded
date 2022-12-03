@@ -152,7 +152,7 @@ class ChratServiceTest {
         // when
         ChratUserToken expected = new ChratUserToken(id, username);
         when(chratUserUtils.addUUIDasString()).thenReturn(id);
-        when(chratUserTokenRepository.findByUsername(username)).thenReturn(true);
+        when(chratUserTokenRepository.findByUsername(username)).thenReturn(Optional.of(expected));
         when(chratUserTokenRepository.deleteByUsername(username)).thenReturn(expected);
         when(chratUserTokenRepository.save(expected)).thenReturn(expected);
         chratService.chratUserToken(username);
@@ -180,7 +180,7 @@ class ChratServiceTest {
         // when
         ChratUserToken expected = new ChratUserToken(id, username);
         when(chratUserUtils.addUUIDasString()).thenReturn(id);
-        when(chratUserTokenRepository.findByUsername(username)).thenReturn(false);
+        when(chratUserTokenRepository.findByUsername(username)).thenReturn(Optional.empty());
         when(chratUserTokenRepository.save(expected)).thenReturn(expected);
         ChratUserToken actual = chratService.chratUserToken(username);
         // then
