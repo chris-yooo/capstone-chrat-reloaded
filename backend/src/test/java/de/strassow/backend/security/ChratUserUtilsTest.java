@@ -31,4 +31,14 @@ class ChratUserUtilsTest {
         //then
         assertNotEquals(passwordString, actual);
     }
+
+    @Test
+    void addUUIDasString8Chars() {
+        //given
+        String randomString = UUID.randomUUID().toString().substring(0, 8);
+        //when
+        String actual = chratUserUtils.addUUIDasString8Chars();
+        //then
+        assertNotEquals(randomString, actual);
+    }
 }
