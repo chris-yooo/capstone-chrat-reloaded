@@ -15,4 +15,8 @@ public class ChratUserUtils {
     public String addPasswordBcrypt(String password) {
         return ChratSecurityConfig.passwordEncoder.encode(password);
     }
+
+    public String addUUIDasString8Chars() {
+        return UUID.randomUUID().toString().substring(0, 8);
+    }
 }
