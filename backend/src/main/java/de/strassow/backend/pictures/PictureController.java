@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class PictureController {
 
     @Autowired
-    PictureStorageService storageService;
+    PictureStorage storageService;
 
     @PostMapping("/upload")
     public String uploadFile(@RequestParam("file") MultipartFile file) {
