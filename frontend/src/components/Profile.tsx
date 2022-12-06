@@ -163,16 +163,21 @@ export default function Profile(props: Props) {
                 </StyledDiv1>
             </form>
             <StyledDiv2>
-                <StyledButton onClick={toggleDoEdit}>
-                    <Icon icon="mdi:edit" inline={true} width="15"/> {doEdit ? "Abbrechen" : "Bearbeiten"}
-                </StyledButton>
+                {doEdit ?
+                    <StyledButton onClick={toggleDoEdit}>
+                        <Icon icon="material-symbols:cancel-rounded" inline={true}
+                              width="15"/> Abbrechen</StyledButton>
+                    :
+                    <StyledButton onClick={toggleDoEdit}>
+                        <Icon icon="mdi:edit" inline={true}
+                              width="15"/> Bearbeiten</StyledButton>}
                 <StyledButton disabled={!doEdit} onClick={handleUpdateUserDetails}>
-                    <Icon icon="mdi:+" inline={true} width="15"/> Speichern
+                    <Icon icon="mdi:user-check" inline={true} width="20"/> Speichern
                 </StyledButton>
             </StyledDiv2>
             <StyledDiv3>
                 <StyledDeleteButton onClick={() => setDoDelete(true)}>
-                    <Icon icon="mdi:-" inline={true} width="15"/> User Löschen
+                    <Icon icon="material-symbols:delete-forever-rounded" inline={true} width="18"/> User Löschen
                 </StyledDeleteButton>
             </StyledDiv3>
             {error && <StyledErrorMessage>{error}</StyledErrorMessage>}
