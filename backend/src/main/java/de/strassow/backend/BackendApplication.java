@@ -1,6 +1,6 @@
 package de.strassow.backend;
 
-import de.strassow.backend.pictures.PictureStorageService;
+import de.strassow.backend.pictures.PictureStorage;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,7 +10,7 @@ import javax.annotation.Resource;
 @SpringBootApplication
 public class BackendApplication implements CommandLineRunner {
     @Resource
-    PictureStorageService storageService;
+    PictureStorage storageService;
 
     public static void main(String[] args) {
         SpringApplication.run(BackendApplication.class, args);
