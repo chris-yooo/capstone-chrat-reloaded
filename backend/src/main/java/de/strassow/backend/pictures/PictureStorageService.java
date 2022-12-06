@@ -36,7 +36,7 @@ public class PictureStorageService implements PictureStorage {
     @Override
     public String save(MultipartFile file) {
         try {
-            String fileNameNew = chratUserUtils.addUUIDasString() + file.getOriginalFilename();
+            String fileNameNew = chratUserUtils.addUUIDasString8Chars() + file.getOriginalFilename();
             Files.copy(file.getInputStream(), this.root.resolve(Objects.requireNonNull(file.getOriginalFilename())));
             Files.move(this.root.resolve(file.getOriginalFilename()), this.root.resolve(fileNameNew));
             return fileNameNew;
