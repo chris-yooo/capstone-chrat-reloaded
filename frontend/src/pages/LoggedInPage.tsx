@@ -35,7 +35,7 @@ export default function LoggedInPage(props: Props) {
         <StyledMain>
             <Routes>
                 <Route path="/" element={<MainChat user={props.user}/>}/>
-                <Route path="/profile" element={<Profile user={props.user}/>}/>
+                <Route path="/profile" element={<Profile user={props.user} logout={logout}/>}/>
             </Routes>
         </StyledMain>
         <StyledFooter>

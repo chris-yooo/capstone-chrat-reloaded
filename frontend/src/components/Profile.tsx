@@ -6,6 +6,7 @@ import axios from "axios";
 
 type Props = {
     user: ChratUserTokenModel
+    logout: () => void
 }
 
 type ChratUserModel = {
@@ -29,6 +30,7 @@ export default function Profile(props: Props) {
     const [messageStatus, setMessageStatus] = useState("")
     const [error, setError] = useState("");
     const [doEdit, setDoEdit] = useState(false);
+    const [doDelete, setDoDelete] = useState(false);
     const [errorMail, setErrorMail] = useState("");
 
     const getUserDetails = () => {
@@ -71,6 +73,25 @@ export default function Profile(props: Props) {
             })
     }
 
+    function deleteUser() {
+        axios.delete("/api/chrat-users/" + id)
+            .then((response) => response.status)
+            .then((status) => {
+                if (status === 204) {
+                    setMessageStatus(username + " wurde Erfolreich gelöscht");
+                    (setTimeout(() => setMessageStatus(""), 2000));
+                    (setTimeout(() => props.logout(), 2001));
+                }
+            })
+            .catch((error) => {
+                if (error.response.status === 400) {
+                    setError("Fehler beim Löschen");
+                    (setTimeout(() => setError(""), 5000));
+                }
+                console.log("Error =>" + error)
+            })
+    }
+
     const toggleDoEdit = () => {
         setDoEdit(!doEdit);
     }
@@ -91,7 +112,24 @@ export default function Profile(props: Props) {
         updateUserDetails();
     }
 
+
+    function handleDeleteUser() {
+        setDoDelete(true);
+
+    }
+
     return <>
+        {doDelete && (
+            <StyledDeleteDiv1>
+                <StyledDeleteDiv2>
+                    <StyledP>Möchtest du deinen Account wirklich in die Mülltonne werfen?</StyledP>
+                    <StyledDeleteDiv3>
+                        <StyledButton onClick={() => setDoDelete(false)}>Abbrechen</StyledButton>
+                        <StyledDeleteButton onClick={deleteUser}>Löschen</StyledDeleteButton>
+                    </StyledDeleteDiv3>
+                </StyledDeleteDiv2>
+            </StyledDeleteDiv1>
+        )}
         <StyledSection>
             <form onSubmit={handleUpdateUserDetails}>
                 <StyledDiv1>
@@ -107,7 +145,6 @@ export default function Profile(props: Props) {
                                  id="firstname"
                                  value={firstName}
                                  onChange={(e) => setFirstName(e.target.value)}
-                                 placeholder={"Chris"}
                                  disabled={!doEdit}
                                  required/>
 
@@ -116,7 +153,6 @@ export default function Profile(props: Props) {
                                  id="lastname"
                                  value={lastName}
                                  onChange={(e) => setLastName(e.target.value)}
-                                 placeholder="Yoo"
                                  disabled={!doEdit}
                                  required/>
 
@@ -125,7 +161,6 @@ export default function Profile(props: Props) {
                                  id="email"
                                  value={email}
                                  onChange={(e) => setEmail(e.target.value)}
-                                 placeholder="chrisyooo@gmail.com"
                                  disabled={!doEdit}
                                  required/>
 
@@ -141,10 +176,15 @@ export default function Profile(props: Props) {
                     <Icon icon="mdi:+" inline={true} width="15"/> Speichern
                 </StyledButton>
             </StyledDiv2>
+            <StyledDiv3>
+                <StyledDeleteButton onClick={handleDeleteUser}>
+                    <Icon icon="mdi:-" inline={true} width="15"/> User Löschen
+                </StyledDeleteButton>
+            </StyledDiv3>
             {error && <StyledErrorMessage>{error}</StyledErrorMessage>}
             {messageStatus && <StyledMessage>{messageStatus}</StyledMessage>}
         </StyledSection>
-    </>;
+    </>
 }
 
 const StyledSection = styled.section`
@@ -168,16 +208,25 @@ const StyledDiv1 = styled.div`
   align-items: center;
   margin: 20px;
   padding: 10px;
-`;
+`
 
 const StyledDiv2 = styled.div`
   display: flex;
   justify-content: center;
   align-self: center;
   padding: 20px;
+  margin-bottom: 0;
+  font-size: 1.1rem;
+`
+
+const StyledDiv3 = styled.div`
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  padding: 0;
   margin-bottom: 23px;
   font-size: 1.1rem;
-`;
+`
 
 const StyledMessage = styled.p`
   margin: 10px;
@@ -244,4 +293,68 @@ const StyledLabel = styled.label`
   letter-spacing: -0.02em;
   color: var(--color-white);
   text-shadow: 0 0 10px var(--color-input-shadow);
+`
+
+const StyledDeleteButton = styled.button`
+  margin: 3px;
+  padding: 10px;
+  width: 150px;
+  transition-duration: 0.4s;
+  background-color: var(--color-button-delete-red);
+  color: var(--color-text);
+  border: none;
+  font-size: 1rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: var(--color-red);
+  }
+
+  &:active {
+    background-color: var(--color-red);
+  }
+`
+
+const StyledP = styled.p`
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.3rem;
+  color: var(--color-white);
+  text-shadow: 0 0 10px var(--color-input-shadow);
+`
+
+const StyledDeleteDiv1 = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+`
+
+const StyledDeleteDiv2 = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: center;
+  align-items: center;
+  padding: 30px;
+  width: 100%;
+  max-width: 45vw;
+  background-color: var(--color-background);
+`
+
+const StyledDeleteDiv3 = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 10px 0 0 0;
+  padding: 10px;
 `
