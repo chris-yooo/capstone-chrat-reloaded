@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {ChratUserTokenModel} from "../security/ChratUserTokenModel";
+import {ChratUserModel} from "./ChratUserModel";
 import {Icon} from "@iconify/react";
 import styled from "styled-components";
 import axios from "axios";
@@ -7,15 +8,6 @@ import axios from "axios";
 type Props = {
     user: ChratUserTokenModel
     logout: () => void
-}
-
-type ChratUserModel = {
-    id: string,
-    username: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-    email: string,
 }
 
 export default function Profile(props: Props) {
