@@ -42,12 +42,18 @@ export default function MainChat(props: Props) {
         onClose: () => {
             console.log("Disconnected from websocket");
         },
+        shouldReconnect: () => true,
+        retryOnError: true,
+        onError: (event) => {
+            console.log(event);
+        },
+        share: true,
     });
 
     const handleMessageSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         WebSocket.sendMessage(messageInput)
-        setMessageInput('');
+        setMessageInput("");
     }
 
     const connectionStatus = {
