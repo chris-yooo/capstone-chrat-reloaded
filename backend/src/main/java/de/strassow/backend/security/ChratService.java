@@ -82,4 +82,13 @@ public class ChratService {
         return chratUserTokenRepository.findById(id).map(ChratUserToken::username)
                 .orElseThrow(() -> new NoSuchElementException("No value present"));
     }
+
+    public void deleteUser(String id) {
+        chratRepository.deleteById(id);
+    }
+
+    public ChratUser findByUsername(String usernameFromSession) {
+        return chratRepository.findByUsername(usernameFromSession)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, notFound));
+    }
 }

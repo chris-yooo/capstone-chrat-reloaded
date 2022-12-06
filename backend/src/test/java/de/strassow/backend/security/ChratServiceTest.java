@@ -209,4 +209,43 @@ class ChratServiceTest {
         // then
         assertEquals(username, chratService.tokenToCompare(id));
     }
+
+    @Test
+    void deleteUser() {
+        // given
+        String id = "123123123123";
+        // when
+        doNothing().when(chratRepository).deleteById(id);
+        //then
+        chratService.deleteUser(id);
+        verify(chratRepository).deleteById(id);
+    }
+
+    @Test
+    void findByUsernameOK() {
+        //given
+        ChratUser chratUser = new ChratUser("1", "chris_yooo", "Yoo", "Chris", "Yoo", "fsagfg@gmail.com");
+        String usernameFromSession = "chris_yooo";
+        //when
+        when(chratRepository.findByUsername(usernameFromSession)).thenReturn(Optional.of(chratUser));
+        ChratUser chratUserOK = chratService.findByUsername(usernameFromSession);
+        //then
+        assertEquals(chratUser, chratUserOK);
+    }
+
+    @Test
+    void findByUsernameExcetion() {
+        //given
+        String usernameFromSession = "chris_yooo";
+        //when
+        when(chratRepository.findByUsername(usernameFromSession)).thenReturn(Optional.empty());
+        String message = null;
+        try {
+            chratService.findByUsername(usernameFromSession);
+        } catch (ResponseStatusException e) {
+            message = e.getReason();
+        }
+        //then
+        assertEquals("User not found", message);
+    }
 }

@@ -299,4 +299,92 @@ class ChratUserControllerTest {
                         }
                         """)).andExpect(status().isBadRequest());
     }
+
+    @DirtiesContext
+    @Test
+    @WithMockUser
+    void deleteChratUser() throws Exception {
+
+        String content = mvc.perform(MockMvcRequestBuilders.post("/api/chrat-users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"username": "user",
+                                "firstName": "det",
+                                "lastName": "lev",
+                                "email": "test@gmail.com",
+                                "password": "SuperSecret344$$"}
+                                """))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        ChratUser chratUser = objectMapper.readValue(content, ChratUser.class);
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/login")
+                        .header("Authorization", "Basic " + base64ClientCredentials)
+                        .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isOk()).andExpect(content().string("OK"));
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/me")
+                        .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isOk());
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/user")
+                        .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isOk()).andExpect(content().json("""
+                                                    {
+                                                    "id": "<id>",
+                                                    "username": "user",
+                                                    "firstName": "det",
+                                                    "lastName": "lev",
+                                                    "email": "test@gmail.com"
+                                                    }
+                        """.replace("<id>", chratUser.id())));
+
+        mvc.perform(MockMvcRequestBuilders.delete("/api/chrat-users/" + chratUser.id()))
+                .andExpect(status().isNoContent());
+    }
+
+    @DirtiesContext
+    @Test
+    @WithMockUser
+    void deleteChratUserException() throws Exception {
+
+        String content = mvc.perform(MockMvcRequestBuilders.post("/api/chrat-users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"username": "user",
+                                "firstName": "det",
+                                "lastName": "lev",
+                                "email": "test@gmail.com",
+                                "password": "SuperSecret344$$"}
+                                """))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        ChratUser chratUser = objectMapper.readValue(content, ChratUser.class);
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/login")
+                        .header("Authorization", "Basic " + base64ClientCredentials)
+                        .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isOk()).andExpect(content().string("OK"));
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/me")
+                        .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isOk());
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/chrat-users/user")
+                        .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isOk()).andExpect(content().json("""
+                                                    {
+                                                    "id": "<id>",
+                                                    "username": "user",
+                                                    "firstName": "det",
+                                                    "lastName": "lev",
+                                                    "email": "test@gmail.com"
+                                                    }
+                        """.replace("<id>", chratUser.id())));
+
+        mvc.perform(MockMvcRequestBuilders.delete("/api/chrat-users/34234234234"))
+                .andExpect(status().isNotFound());
+    }
 }

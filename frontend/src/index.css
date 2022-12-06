@@ -14,6 +14,8 @@ body {
     --color-blue: rgb(0, 0, 255);
     --color-green: rgb(0, 255, 0);
     --color-yellow: rgb(255, 255, 0);
+
+    --color-button-delete-red: rgb(152, 15, 15);
 }
 
 @media (prefers-color-scheme: dark) {

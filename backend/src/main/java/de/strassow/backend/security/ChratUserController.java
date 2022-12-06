@@ -49,6 +49,20 @@ public class ChratUserController {
         return chratService.updateUserProfile(dtoUpdateChratUser);
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteChratUser(@PathVariable String id) {
+        String usernameFromSession = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+        ChratUser chratUserFromRepo = chratService.findByUsername(usernameFromSession);
+        if (!id.equals(chratUserFromRepo.id())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The username you want to delete not found!");
+        }
+        chratService.deleteUser(id);
+    }
+
     @GetMapping("/login")
     public String login() {
         return "OK";
