@@ -27,7 +27,7 @@ export default function Profile(props: Props) {
     const [firstName, setFirstName] = useState(userDetails.firstName);
     const [lastName, setLastName] = useState(userDetails.lastName);
     const [email, setEmail] = useState(userDetails.email);
-    const [messageStatus, setMessageStatus] = useState("")
+    const [messageStatus, setMessageStatus] = useState("");
     const [error, setError] = useState("");
     const [doEdit, setDoEdit] = useState(false);
     const [doDelete, setDoDelete] = useState(false);
@@ -84,7 +84,7 @@ export default function Profile(props: Props) {
                 }
             })
             .catch((error) => {
-                if (error.response.status === 400) {
+                if (error.response.status === 404) {
                     setError("Fehler beim Löschen");
                     (setTimeout(() => setError(""), 5000));
                 }
@@ -110,12 +110,6 @@ export default function Profile(props: Props) {
             setErrorMail("");
         }
         updateUserDetails();
-    }
-
-
-    function handleDeleteUser() {
-        setDoDelete(true);
-
     }
 
     return <>
@@ -170,14 +164,14 @@ export default function Profile(props: Props) {
             </form>
             <StyledDiv2>
                 <StyledButton onClick={toggleDoEdit}>
-                    <Icon icon="mdi:edit" inline={true} width="15"/> Bearbeiten
+                    <Icon icon="mdi:edit" inline={true} width="15"/> {doEdit ? "Abbrechen" : "Bearbeiten"}
                 </StyledButton>
-                <StyledButton onClick={handleUpdateUserDetails}>
+                <StyledButton disabled={!doEdit} onClick={handleUpdateUserDetails}>
                     <Icon icon="mdi:+" inline={true} width="15"/> Speichern
                 </StyledButton>
             </StyledDiv2>
             <StyledDiv3>
-                <StyledDeleteButton onClick={handleDeleteUser}>
+                <StyledDeleteButton onClick={() => setDoDelete(true)}>
                     <Icon icon="mdi:-" inline={true} width="15"/> User Löschen
                 </StyledDeleteButton>
             </StyledDiv3>
