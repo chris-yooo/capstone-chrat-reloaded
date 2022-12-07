@@ -32,13 +32,15 @@ export default function Profile(props: Props) {
     const [file, setFile] = useState<FileList | null>(null)
     const [fileName, setFileName] = useState(userDetails.profilePicture.fileName);
     const [fileUrl, setFileUrl] = useState(userDetails.profilePicture.fileUrl);
+    const [fileNameToUpdate, setFileNameToUpdate] = useState("");
+    const [fileUrlToUpdate, setFileUrlToUpdate] = useState("");
     const profilePictureUrl = "/api/pictures/files/";
     let fileData = new FormData();
     fileData.append("file", file ? file[0] : new File([""], "baby_placeholder.jpg"));
 
     const profilePicture = {
-        name: fileName,
-        url: fileUrl
+        fileName: fileNameToUpdate,
+        fileUrl: fileUrlToUpdate
     }
 
     const getUserDetails = () => {
@@ -70,7 +72,7 @@ export default function Profile(props: Props) {
             .then((response) => response.status)
             .then((status) => {
                 if (status === 200) {
-                    setMessageStatus("Erfolreich geändert");
+                    setMessageStatus("Erfolgreich gespeichert");
                     (setTimeout(() => setMessageStatus(""), 2000));
                     setDoEdit(false);
                 }
@@ -90,12 +92,23 @@ export default function Profile(props: Props) {
                 "Content-Type": "multipart/form-data"
             }
         })
-            .then((response) => setFileName(response.request.response))
-            .then(getUserDetails)
-            .then(() => setDoProfilePicture(false))
+            // .then((response) => setFileName(response.request.response))
+            .then((response) => response)
+            .then((response) => {
+                if (response.request.response) {
+                    setFileNameToUpdate(response.request.response);
+                }
+                if (response.status === 200) {
+                    setMessageStatus("Bild wurde erfolgreich hochgeladen");
+                    (setTimeout(() => updateUserDetails(), 500));
+                    (setTimeout(() => setMessageStatus(""), 2000));
+                    (setTimeout(() => getUserDetails(), 2001));
+                    (setTimeout(() => setDoProfilePicture(false), 2002));
+                }
+            })
             .catch((error) => {
-                if (error.response.status === 404) {
-                    setError("Fehler beim hochladen");
+                if (error.response.status === 417) {
+                    setError("Fehler beim hochladen, bitte versuche es erneut");
                     (setTimeout(() => setError(""), 5000));
                 }
                 console.log("Error =>" + error)
@@ -125,8 +138,14 @@ export default function Profile(props: Props) {
         setDoEdit(!doEdit);
     }
 
+    let constructFileUrlToUpdate = () => {
+        setFileUrlToUpdate(profilePictureUrl.concat(fileNameToUpdate))
+    }
+
+    useEffect(constructFileUrlToUpdate, [fileNameToUpdate])
+
     let constructFileUrl = () => {
-        setFileUrl(profilePictureUrl.concat(fileName ? fileName : "placeholder.jpg"))
+        setFileUrl(profilePictureUrl.concat(fileName))
     }
 
     useEffect(constructFileUrl, [fileName])
@@ -173,6 +192,7 @@ export default function Profile(props: Props) {
                         <StyledButton onClick={() => setDoProfilePicture(false)}>Abbrechen</StyledButton>
                         <StyledButton onClick={handleUploadProfilePicture}>Hochladen</StyledButton>
                     </StyledDeleteDiv3>
+                    {messageStatus && <StyledMessage>{messageStatus}</StyledMessage>}
                 </StyledDeleteDiv2>
             </StyledDeleteDiv1>
         )}
