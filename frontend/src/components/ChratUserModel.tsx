@@ -1,3 +1,5 @@
+import {ProfilPictureModel} from "./ProfilPictureModel";
+
 export type ChratUserModel = {
     id: string,
     username: string,
@@ -5,4 +7,5 @@ export type ChratUserModel = {
     firstName: string,
     lastName: string,
     email: string,
+    profilePicture: ProfilPictureModel,
 }

@@ -13,7 +13,11 @@ type Props = {
 export default function Profile(props: Props) {
 
     const [userDetails, setUserDetails] = React.useState<ChratUserModel>
-    ({id: "", username: "", password: "", firstName: "", lastName: "", email: ""});
+    ({
+        id: "", username: "", password: "",
+        firstName: "", lastName: "", email: "",
+        profilePicture: {fileName: "placeholder.jpeg", fileUrl: "/api/pictures/files/placeholder.jpeg"}
+    });
     const [id, setId] = useState(userDetails.id);
     const [username, setUsername] = useState(userDetails.username);
     const [firstName, setFirstName] = useState(userDetails.firstName);
@@ -22,8 +26,20 @@ export default function Profile(props: Props) {
     const [messageStatus, setMessageStatus] = useState("");
     const [error, setError] = useState("");
     const [doEdit, setDoEdit] = useState(false);
+    const [doProfilePicture, setDoProfilePicture] = useState(false);
     const [doDelete, setDoDelete] = useState(false);
     const [errorMail, setErrorMail] = useState("");
+    const [file, setFile] = useState<FileList | null>(null)
+    const [fileName, setFileName] = useState(userDetails.profilePicture.fileName);
+    const [fileUrl, setFileUrl] = useState(userDetails.profilePicture.fileUrl);
+    const profilePictureUrl = "/api/pictures/files/";
+    let fileData = new FormData();
+    fileData.append("file", file ? file[0] : new File([""], "baby_placeholder.jpeg"));
+
+    const profilePicture = {
+        name: fileName,
+        url: fileUrl
+    }
 
     const getUserDetails = () => {
         axios.get("/api/chrat-users/" + props.user.username)
@@ -37,6 +53,8 @@ export default function Profile(props: Props) {
         setFirstName(userDetails.firstName);
         setLastName(userDetails.lastName);
         setEmail(userDetails.email);
+        setFileName(userDetails.profilePicture.fileName);
+        setFileUrl(userDetails.profilePicture.fileUrl);
     }, [userDetails]);
 
     useEffect(getUserDetails, [props.user.username]);
@@ -47,6 +65,7 @@ export default function Profile(props: Props) {
             firstName,
             lastName,
             email,
+            profilePicture
         })
             .then((response) => response.status)
             .then((status) => {
@@ -59,6 +78,24 @@ export default function Profile(props: Props) {
             .catch((error) => {
                 if (error.response.status === 400) {
                     setError("Fehler beim Ändern");
+                    (setTimeout(() => setError(""), 5000));
+                }
+                console.log("Error =>" + error)
+            })
+    }
+
+    const uploadProfilePicture = () => {
+        axios.post("/api/pictures/upload", fileData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        })
+            .then((response) => setFileName(response.request.response))
+            .then(getUserDetails)
+            .then(() => setDoProfilePicture(false))
+            .catch((error) => {
+                if (error.response.status === 404) {
+                    setError("Fehler beim hochladen");
                     (setTimeout(() => setError(""), 5000));
                 }
                 console.log("Error =>" + error)
@@ -88,6 +125,12 @@ export default function Profile(props: Props) {
         setDoEdit(!doEdit);
     }
 
+    let constructFileUrl = () => {
+        setFileUrl(profilePictureUrl.concat(fileName ? fileName : "placeholder.jpeg"))
+    }
+
+    useEffect(constructFileUrl, [fileName])
+
     const isValidEmail = (email: string) => {
         return /.@./.test(email);
     }
@@ -104,14 +147,31 @@ export default function Profile(props: Props) {
         updateUserDetails();
     }
 
+    function handleUploadProfilePicture(event: any) {
+        event.preventDefault()
+        uploadProfilePicture();
+    }
+
     return <>
         {doDelete && (
             <StyledDeleteDiv1>
                 <StyledDeleteDiv2>
                     <StyledP>Möchtest du deinen Account wirklich in die Mülltonne werfen?</StyledP>
+                    <input type={"file"} onChange={(e) => setFile(e.target.files)}/>
                     <StyledDeleteDiv3>
                         <StyledButton onClick={() => setDoDelete(false)}>Abbrechen</StyledButton>
                         <StyledDeleteButton onClick={deleteUser}>Löschen</StyledDeleteButton>
+                    </StyledDeleteDiv3>
+                </StyledDeleteDiv2>
+            </StyledDeleteDiv1>
+        )}
+        {doProfilePicture && (
+            <StyledDeleteDiv1>
+                <StyledDeleteDiv2>
+                    <StyledP>Bitte Profilbild auswählen</StyledP>
+                    <StyledDeleteDiv3>
+                        <StyledButton onClick={() => setDoProfilePicture(false)}>Abbrechen</StyledButton>
+                        <StyledButton onClick={handleUploadProfilePicture}>Hochladen</StyledButton>
                     </StyledDeleteDiv3>
                 </StyledDeleteDiv2>
             </StyledDeleteDiv1>
@@ -120,11 +180,15 @@ export default function Profile(props: Props) {
             <form onSubmit={handleUpdateUserDetails}>
                 <StyledDiv1>
                     <StyledLabel htmlFor="username">Username:</StyledLabel>
+                    <div>
                     <StyledInput type="text"
                                  id="username"
                                  value={username}
                                  disabled={true}
                                  required/>
+
+                    <StyledImg src={fileUrl} alt={"Baby Bild"}/>
+                    </div>
 
                     <StyledLabel htmlFor="firstname">Vorname:</StyledLabel>
                     <StyledInput type="text"
@@ -348,4 +412,11 @@ const StyledDeleteDiv3 = styled.div`
   flex-wrap: wrap;
   margin: 10px 0 0 0;
   padding: 10px;
+`
+
+const StyledImg = styled.img`
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
 `
