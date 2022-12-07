@@ -16,7 +16,7 @@ class ChratServiceTest {
     ChratUserUtils chratUserUtils = mock(ChratUserUtils.class);
     ChratUserTokenRepository chratUserTokenRepository = mock(ChratUserTokenRepository.class);
     ChratService chratService = new ChratService(chratRepository, chratUserUtils, chratUserTokenRepository);
-    PictureModel profilePicture = new PictureModel("placeholder.jpeg", "/api/pictures/files/placeholder.jpeg");
+    PictureModel profilePicture = new PictureModel("placeholder.jpg", "/api/pictures/files/placeholder.jpg");
 
     @Test
     void getChratUserOK() {

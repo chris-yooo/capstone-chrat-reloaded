@@ -16,7 +16,7 @@ export default function Profile(props: Props) {
     ({
         id: "", username: "", password: "",
         firstName: "", lastName: "", email: "",
-        profilePicture: {fileName: "placeholder.jpeg", fileUrl: "/api/pictures/files/placeholder.jpeg"}
+        profilePicture: {fileName: "placeholder.jpg", fileUrl: "/api/pictures/files/placeholder.jpg"}
     });
     const [id, setId] = useState(userDetails.id);
     const [username, setUsername] = useState(userDetails.username);
@@ -34,7 +34,7 @@ export default function Profile(props: Props) {
     const [fileUrl, setFileUrl] = useState(userDetails.profilePicture.fileUrl);
     const profilePictureUrl = "/api/pictures/files/";
     let fileData = new FormData();
-    fileData.append("file", file ? file[0] : new File([""], "baby_placeholder.jpeg"));
+    fileData.append("file", file ? file[0] : new File([""], "baby_placeholder.jpg"));
 
     const profilePicture = {
         name: fileName,
@@ -126,7 +126,7 @@ export default function Profile(props: Props) {
     }
 
     let constructFileUrl = () => {
-        setFileUrl(profilePictureUrl.concat(fileName ? fileName : "placeholder.jpeg"))
+        setFileUrl(profilePictureUrl.concat(fileName ? fileName : "placeholder.jpg"))
     }
 
     useEffect(constructFileUrl, [fileName])
@@ -179,16 +179,14 @@ export default function Profile(props: Props) {
         <StyledSection>
             <form onSubmit={handleUpdateUserDetails}>
                 <StyledDiv1>
+                    <StyledImg src={fileUrl} alt={"Profil Bild"}/>
+
                     <StyledLabel htmlFor="username">Username:</StyledLabel>
-                    <div>
                     <StyledInput type="text"
                                  id="username"
                                  value={username}
                                  disabled={true}
                                  required/>
-
-                    <StyledImg src={fileUrl} alt={"Baby Bild"}/>
-                    </div>
 
                     <StyledLabel htmlFor="firstname">Vorname:</StyledLabel>
                     <StyledInput type="text"
@@ -415,8 +413,8 @@ const StyledDeleteDiv3 = styled.div`
 `
 
 const StyledImg = styled.img`
-  width: 150px;
-  height: 150px;
+  width: 125px;
+  height: 125px;
   object-fit: cover;
   border-radius: 50%;
 `
