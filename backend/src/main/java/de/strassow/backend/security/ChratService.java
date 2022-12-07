@@ -1,5 +1,6 @@
 package de.strassow.backend.security;
 
+import de.strassow.backend.pictures.PictureModel;
 import de.strassow.backend.utils.ChratUserUtils;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +30,7 @@ public class ChratService {
         if (chratRepository.findByUsername(dtoNewChratUser.username()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, notFound);
         }
+        PictureModel profilePicture = new PictureModel("placeholder.jpeg", "/api/pictures/files/placeholder.jpeg");
         String passwordBcrypt = chratUserUtils.addPasswordBcrypt(dtoNewChratUser.password());
         ChratUser chratUser = new ChratUser(
                 chratUserUtils.addUUIDasString(),
@@ -36,7 +38,8 @@ public class ChratService {
                 passwordBcrypt,
                 dtoNewChratUser.firstName(),
                 dtoNewChratUser.lastName(),
-                dtoNewChratUser.email()
+                dtoNewChratUser.email(),
+                profilePicture
         );
         chratRepository.save(chratUser);
         return chratUser;
@@ -47,7 +50,7 @@ public class ChratService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, notFound));
     }
 
-    public ChratUser updateUserProfile(DtoUpdateChratUser dtoUpdateChratUser) throws ResponseStatusException {
+    public ChratUser updateUserProfile(DtoUpdateChratUser dtoUpdateChratUser) {
         ChratUser chratUser = chratRepository.findById(dtoUpdateChratUser.id())
                 .orElseThrow(() -> new RuntimeException(notFound));
         ChratUser updatedChratUser = new ChratUser(
@@ -56,7 +59,8 @@ public class ChratService {
                 chratUser.passwordBcrypt(),
                 dtoUpdateChratUser.firstName(),
                 dtoUpdateChratUser.lastName(),
-                dtoUpdateChratUser.email()
+                dtoUpdateChratUser.email(),
+                dtoUpdateChratUser.profilePicture()
         );
         return chratRepository.save(updatedChratUser);
     }
