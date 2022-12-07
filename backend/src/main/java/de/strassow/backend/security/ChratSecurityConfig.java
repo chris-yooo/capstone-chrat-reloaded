@@ -30,7 +30,7 @@ public class ChratSecurityConfig {
                 .antMatchers(HttpMethod.GET, "/", "/static/**", "/index.html", "/api/chrat-users/me").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/chrat-users").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/api/chrat-users/{id}").authenticated()
-                .antMatchers("/api/mainchat", "/api/chrat-users/login", "/api/chrat-users/logout", "/api/chrat-users/{username}").authenticated()
+                .antMatchers("/api/mainchat", "/api/chrat-users/login", "/api/chrat-users/logout", "/api/chrat-users/{username}", "/api/pictures/*").authenticated()
                 .anyRequest().denyAll()
                 .and().build();
     }
