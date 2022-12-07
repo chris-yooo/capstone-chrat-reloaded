@@ -25,7 +25,6 @@ public class PictureController {
         try {
             return storageService.save(file);
         } catch (Exception e) {
-
             return "Could not upload the file: " + file.getOriginalFilename() + ". Error: " + e.getMessage();
         }
     }
