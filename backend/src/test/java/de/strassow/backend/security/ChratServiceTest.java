@@ -1,5 +1,6 @@
 package de.strassow.backend.security;
 
+import de.strassow.backend.pictures.PictureModel;
 import de.strassow.backend.utils.ChratUserUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.server.ResponseStatusException;
@@ -15,11 +16,12 @@ class ChratServiceTest {
     ChratUserUtils chratUserUtils = mock(ChratUserUtils.class);
     ChratUserTokenRepository chratUserTokenRepository = mock(ChratUserTokenRepository.class);
     ChratService chratService = new ChratService(chratRepository, chratUserUtils, chratUserTokenRepository);
+    PictureModel profilePicture = new PictureModel("placeholder.jpeg", "/api/pictures/files/placeholder.jpeg");
 
     @Test
     void getChratUserOK() {
         //GIVEN
-        ChratUser chratUser = new ChratUser("1", "chris_yooo", "Yoooo", "Chris", "Yoo", "fsagfg@gmail.com");
+        ChratUser chratUser = new ChratUser("1", "chris_yooo", "Yoooo", "Chris", "Yoo", "fsagfg@gmail.com", profilePicture);
         DtoNewChratUser dtoNewChratUser = new DtoNewChratUser("chris_yooo", "Yoo", "Chris", "Yoo", "fsagfg@gmail.com");
 
         //WHEN
@@ -37,7 +39,7 @@ class ChratServiceTest {
     @Test
     void getChratUserException() {
         //GIVEN
-        ChratUser chratUser = new ChratUser("1", "chris_yooo", "Yoo", "Chris", "Yoo", "fsagfg@gmail.com");
+        ChratUser chratUser = new ChratUser("1", "chris_yooo", "Yoo", "Chris", "Yoo", "fsagfg@gmail.com", profilePicture);
         //WHEN
         when(chratRepository.findByUsername(chratUser.username())).thenReturn(Optional.empty());
         String message = null;
@@ -54,7 +56,7 @@ class ChratServiceTest {
     @Test
     void addChratUser() {
         //given
-        ChratUser chratUserWithId = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
+        ChratUser chratUserWithId = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com", profilePicture);
         DtoNewChratUser DtoNewChratUserWithoutId = new DtoNewChratUser("chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
         //when
         when(chratUserUtils.addUUIDasString()).thenReturn(chratUserWithId.id());
@@ -71,10 +73,10 @@ class ChratServiceTest {
     @Test
     void getChratUseraddChratUserException() {
         //given
-        ChratUser chratUser = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
+        ChratUser chratUser = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com", profilePicture);
         DtoNewChratUser dtoNewChratUserWithoutId = new DtoNewChratUser("chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
         //when
-        when(chratRepository.findByUsername(dtoNewChratUserWithoutId.username())).thenReturn(Optional.of(new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com")));
+        when(chratRepository.findByUsername(dtoNewChratUserWithoutId.username())).thenReturn(Optional.of(new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com", profilePicture)));
         String message = null;
         try {
             chratService.addChratUser(dtoNewChratUserWithoutId);
@@ -89,7 +91,7 @@ class ChratServiceTest {
     @Test
     void getChratUserDetailsOK() {
         //given
-        ChratUser chratUserComplete = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
+        ChratUser chratUserComplete = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com", profilePicture);
         //when
         when(chratRepository.findByUsername(chratUserComplete.username())).thenReturn(Optional.of(chratUserComplete));
         ChratUser actual = chratService.getChratUserDetails(chratUserComplete.username());
@@ -101,7 +103,7 @@ class ChratServiceTest {
     @Test
     void getChratUserDetailsException() {
         //given
-        ChratUser chratUser = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
+        ChratUser chratUser = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com", profilePicture);
         //when
         when(chratRepository.findByUsername(chratUser.username())).thenReturn(Optional.empty());
         String message = null;
@@ -117,9 +119,9 @@ class ChratServiceTest {
 
     @Test
     void updateChratUserOK() {
-        ChratUser chratUserOld = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
-        ChratUser chratUserNew = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com");
-        DtoUpdateChratUser chratUserDto = new DtoUpdateChratUser("1", "Chris", "Yoo", "fsagfg@gmail.com");
+        ChratUser chratUserOld = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com", profilePicture);
+        ChratUser chratUserNew = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com", profilePicture);
+        DtoUpdateChratUser chratUserDto = new DtoUpdateChratUser("1", "Chris", "Yoo", "fsagfg@gmail.com", profilePicture);
         //when
         when(chratRepository.findById(chratUserDto.id())).thenReturn(Optional.of(chratUserOld));
         when(chratRepository.save(chratUserNew)).thenReturn(chratUserNew);
@@ -132,7 +134,7 @@ class ChratServiceTest {
     void updateChratUserException() {
         String notFound = "User not found";
         String message = null;
-        DtoUpdateChratUser chratUserDto = new DtoUpdateChratUser("1", "Chris", "Yoo", "fsagfg@gmail.com");
+        DtoUpdateChratUser chratUserDto = new DtoUpdateChratUser("1", "Chris", "Yoo", "fsagfg@gmail.com", profilePicture);
         //when
         when(chratRepository.findById(chratUserDto.id())).thenReturn(Optional.empty());
         try {
@@ -224,7 +226,7 @@ class ChratServiceTest {
     @Test
     void findByUsernameOK() {
         //given
-        ChratUser chratUser = new ChratUser("1", "chris_yooo", "Yoo", "Chris", "Yoo", "fsagfg@gmail.com");
+        ChratUser chratUser = new ChratUser("1", "chris_yooo", "Yoo", "Chris", "Yoo", "fsagfg@gmail.com", profilePicture);
         String usernameFromSession = "chris_yooo";
         //when
         when(chratRepository.findByUsername(usernameFromSession)).thenReturn(Optional.of(chratUser));
