@@ -30,7 +30,7 @@ public class ChratService {
         if (chratRepository.findByUsername(dtoNewChratUser.username()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, notFound);
         }
-        PictureModel profilePicture = new PictureModel("placeholder.jpeg", "/api/pictures/files/placeholder.jpeg");
+        PictureModel profilePicture = new PictureModel("placeholder.jpg", "/api/pictures/files/placeholder.jpg");
         String passwordBcrypt = chratUserUtils.addPasswordBcrypt(dtoNewChratUser.password());
         ChratUser chratUser = new ChratUser(
                 chratUserUtils.addUUIDasString(),
