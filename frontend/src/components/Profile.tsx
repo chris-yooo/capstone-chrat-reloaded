@@ -157,7 +157,6 @@ export default function Profile(props: Props) {
             <StyledDeleteDiv1>
                 <StyledDeleteDiv2>
                     <StyledP>Möchtest du deinen Account wirklich in die Mülltonne werfen?</StyledP>
-                    <input type={"file"} onChange={(e) => setFile(e.target.files)}/>
                     <StyledDeleteDiv3>
                         <StyledButton onClick={() => setDoDelete(false)}>Abbrechen</StyledButton>
                         <StyledDeleteButton onClick={deleteUser}>Löschen</StyledDeleteButton>
@@ -169,6 +168,7 @@ export default function Profile(props: Props) {
             <StyledDeleteDiv1>
                 <StyledDeleteDiv2>
                     <StyledP>Bitte Profilbild auswählen</StyledP>
+                    <input type={"file"} onChange={(e) => setFile(e.target.files)}/>
                     <StyledDeleteDiv3>
                         <StyledButton onClick={() => setDoProfilePicture(false)}>Abbrechen</StyledButton>
                         <StyledButton onClick={handleUploadProfilePicture}>Hochladen</StyledButton>
@@ -179,7 +179,12 @@ export default function Profile(props: Props) {
         <StyledSection>
             <form onSubmit={handleUpdateUserDetails}>
                 <StyledDiv1>
-                    <StyledImg src={fileUrl} alt={"Profil Bild"}/>
+                    {doEdit ?
+                        <StyledButton onClick={() => setDoProfilePicture(true)}>
+                            <StyledImg src={fileUrl} alt={"Profil Bild"}/>
+                        </StyledButton>
+                        :
+                        <StyledImg src={fileUrl} alt={"Profil Bild"}/>}
 
                     <StyledLabel htmlFor="username">Username:</StyledLabel>
                     <StyledInput type="text"
