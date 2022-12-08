@@ -2,10 +2,11 @@ import axios from "axios";
 import {Route, Routes} from "react-router";
 import {useNavigate} from "react-router-dom";
 import MainChat from "../components/MainChat";
-import React from "react";
+import {useEffect, useState} from "react";
 import styled from "styled-components";
 import {ChratUserTokenModel} from "../security/ChratUserTokenModel";
 import Profile from "../components/Profile";
+import {ChratUserModel} from "../components/ChratUserModel";
 
 type Props = {
     user: ChratUserTokenModel
@@ -14,7 +15,22 @@ type Props = {
 
 export default function LoggedInPage(props: Props) {
 
+    const [userDetails, setUserDetails] = useState<ChratUserModel>
+    ({
+        id: "", username: "", password: "",
+        firstName: "", lastName: "", email: "",
+        profilePicture: {fileName: "placeholder.jpg", fileUrl: "/api/pictures/files/placeholder.jpg"}
+    });
+    const [userPictureMenu, setUserPictureMenu] = useState<boolean>(false);
     const nlink = useNavigate();
+
+    const getUserDetails = () => {
+        axios.get("/api/chrat-users/" + props.user.username)
+            .then(response => response.data)
+            .then(setUserDetails)
+    }
+
+    useEffect(getUserDetails, [props.user.username]);
 
     const logout = () => {
         axios.get("/api/chrat-users/logout")
@@ -28,14 +44,23 @@ export default function LoggedInPage(props: Props) {
             <StyledH1>chRat-Reloaded</StyledH1>
             <StyledH2>der Messenger</StyledH2>
         </StyledHeader>
-        <aside>
-            <button onClick={() => nlink("/Profile")}>Profile undso</button>
-            <button onClick={() => logout()}>Logout</button>
-        </aside>
+        <StyledNav>
+            <StyledButton onClick={() => setUserPictureMenu(!userPictureMenu)}>
+            <StyledImg src={userDetails.profilePicture.fileUrl} alt="Profile Picture"/>
+                </StyledButton>
+            {userPictureMenu &&
+                <StyledPictureMenu>
+                    <button onClick={() => nlink("/Profile")}>Profile</button>
+                    <button onClick={() => nlink("/")}>Mainchat</button>
+                    <button onClick={() => logout()}>Logout</button>
+                </StyledPictureMenu>
+            }
+        </StyledNav>
         <StyledMain>
             <Routes>
                 <Route path="/" element={<MainChat user={props.user}/>}/>
-                <Route path="/profile" element={<Profile user={props.user} logout={logout}/>}/>
+                <Route path="/profile"
+                       element={<Profile user={props.user} userDetails={userDetails} logout={logout}/>}/>
             </Routes>
         </StyledMain>
         <StyledFooter>
@@ -90,4 +115,33 @@ const StyledFooter = styled.footer`
   font-weight: 400;
   color: var(--color-white);
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+`
+
+const StyledButton = styled.button`
+  transition-duration: 0.4s;
+  background-color: transparent;
+  border: none;
+`
+
+const StyledPictureMenu = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: center;
+  padding: 20px;
+  margin-bottom: 0;
+  font-size: 1.1rem;
+`
+
+const StyledNav = styled.nav`
+  position: absolute;
+  top: 0;
+  right: 0;
+`
+
+const StyledImg = styled.img`
+  width: 125px;
+  height: 125px;
+  object-fit: cover;
+  border-radius: 50%;
 `

@@ -1,4 +1,4 @@
-export type ProfilPictureModel = {
+export type ProfilePictureModel = {
     fileName: string,
     fileUrl: string,
 }
