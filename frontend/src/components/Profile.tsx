@@ -172,7 +172,7 @@ export default function Profile(props: Props) {
             <StyledDeleteDiv1>
                 <StyledDeleteDiv2>
                     <StyledP>Bitte Profilbild auswählen</StyledP>
-                    <input type={"file"} accept={"image/*"} onChange={(e) => setFile(e.target.files)}/>
+                    <StyledInput type={"file"} accept={"image/*"} onChange={(e) => setFile(e.target.files)}/>
                     <StyledDeleteDiv3>
                         <StyledButton onClick={() => setDoProfilePicture(false)}>Abbrechen</StyledButton>
                         <StyledButton onClick={handleUploadProfilePicture}>Hochladen</StyledButton>
@@ -183,15 +183,19 @@ export default function Profile(props: Props) {
             </StyledDeleteDiv1>
         )}
         <StyledSection>
-
+            <StyledDiv4>
+                {doEdit ?
+                <StyledEditPictureButton type="button" onClick={() => setDoProfilePicture(true)}>
+                    <StyledImg src={fileUrl} alt={"Profil Bild"}/>
+                <StyledDiv5>
+                    <Icon icon="fluent:send-copy-24-filled" color="var(--color-white)" width="50"/>
+                </StyledDiv5>
+                </StyledEditPictureButton>
+                :
+                <StyledImg src={fileUrl} alt={"Profil Bild"}/>}
+            </StyledDiv4>
             <form onSubmit={handleUpdateUserDetails}>
                 <StyledDiv1>
-                    {doEdit ?
-                        <StyledButton type="button" onClick={() => setDoProfilePicture(true)}>
-                            <StyledImg src={fileUrl} alt={"Profil Bild"}/>
-                        </StyledButton>
-                        :
-                        <StyledImg src={fileUrl} alt={"Profil Bild"}/>}
                     <StyledLabel htmlFor="username">Username:</StyledLabel>
                     <StyledInput type="text"
                                  id="username"
@@ -271,11 +275,7 @@ const StyledSection = styled.section`
 
 const StyledDiv1 = styled.div`
   width: 80%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin: 20px;
+  margin: 0 0 20px 0;
   padding: 10px;
 `
 
@@ -426,6 +426,34 @@ const StyledDeleteDiv3 = styled.div`
   flex-wrap: wrap;
   margin: 10px 0 0 0;
   padding: 10px;
+`
+
+const StyledDiv4 = styled.div`
+  position: relative;
+  margin: 10px 0 0 0;
+  padding: 10px;
+`
+
+const StyledDiv5 = styled.div`
+  position: absolute;
+  top: 48px;
+  left: 54px;
+`
+
+const StyledEditPictureButton = styled.button`
+  display: flex;
+  transition-duration: 0.4s;
+  border: none;
+  background-color: transparent;
+  border-radius: 50%;
+
+  &:hover {
+    background-color: var(--color-button-hover);
+  }
+
+  &:active {
+    background-color: var(--color-button-active);
+  }
 `
 
 const StyledImg = styled.img`
