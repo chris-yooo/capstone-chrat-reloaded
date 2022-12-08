@@ -1,37 +1,33 @@
 import React, {useEffect, useState} from 'react';
 import {ChratUserTokenModel} from "../security/ChratUserTokenModel";
-import {ChratUserModel} from "./ChratUserModel";
 import {Icon} from "@iconify/react";
 import styled from "styled-components";
 import axios from "axios";
+import {ChratUserModel} from "./ChratUserModel";
 
 type Props = {
     user: ChratUserTokenModel
+    userDetails: ChratUserModel
     logout: () => void
 }
 
 export default function Profile(props: Props) {
 
-    const [userDetails, setUserDetails] = React.useState<ChratUserModel>
-    ({
-        id: "", username: "", password: "",
-        firstName: "", lastName: "", email: "",
-        profilePicture: {fileName: "placeholder.jpg", fileUrl: "/api/pictures/files/placeholder.jpg"}
-    });
-    const [id, setId] = useState(userDetails.id);
-    const [username, setUsername] = useState(userDetails.username);
-    const [firstName, setFirstName] = useState(userDetails.firstName);
-    const [lastName, setLastName] = useState(userDetails.lastName);
-    const [email, setEmail] = useState(userDetails.email);
+
+    const [id, setId] = useState(props.userDetails.id);
+    const [username, setUsername] = useState(props.userDetails.username);
+    const [firstName, setFirstName] = useState(props.userDetails.firstName);
+    const [lastName, setLastName] = useState(props.userDetails.lastName);
+    const [email, setEmail] = useState(props.userDetails.email);
     const [messageStatus, setMessageStatus] = useState("");
     const [error, setError] = useState("");
     const [doEdit, setDoEdit] = useState(false);
     const [doProfilePicture, setDoProfilePicture] = useState(false);
     const [doDelete, setDoDelete] = useState(false);
     const [errorMail, setErrorMail] = useState("");
-    const [file, setFile] = useState<FileList | null>(null)
-    const [fileName, setFileName] = useState(userDetails.profilePicture.fileName);
-    const [fileUrl, setFileUrl] = useState(userDetails.profilePicture.fileUrl);
+    const [file, setFile] = useState<FileList | null>(null);
+    const [fileName, setFileName] = useState(props.userDetails.profilePicture.fileName);
+    const [fileUrl, setFileUrl] = useState(props.userDetails.profilePicture.fileUrl);
     const profilePictureUrl = "/api/pictures/files/";
     let fileData = new FormData();
     fileData.append("file", file ? file[0] : new File([""], "placeholder.jpg"));
@@ -40,24 +36,6 @@ export default function Profile(props: Props) {
         fileName: fileName,
         fileUrl: fileUrl
     }
-
-    const getUserDetails = () => {
-        axios.get("/api/chrat-users/" + props.user.username)
-            .then(response => response.data)
-            .then(setUserDetails)
-    }
-
-    useEffect(() => {
-        setId(userDetails.id);
-        setUsername(userDetails.username);
-        setFirstName(userDetails.firstName);
-        setLastName(userDetails.lastName);
-        setEmail(userDetails.email);
-        setFileName(userDetails.profilePicture.fileName);
-        setFileUrl(userDetails.profilePicture.fileUrl);
-    }, [userDetails]);
-
-    useEffect(getUserDetails, [props.user.username]);
 
     const updateUserDetails = () => {
         axios.put("/api/chrat-users/" + id, {

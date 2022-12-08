@@ -1,4 +1,4 @@
-import {ProfilPictureModel} from "./ProfilPictureModel";
+import {ProfilePictureModel} from "./ProfilePictureModel";
 
 export type ChratUserModel = {
     id: string,
@@ -7,5 +7,5 @@ export type ChratUserModel = {
     firstName: string,
     lastName: string,
     email: string,
-    profilePicture: ProfilPictureModel,
+    profilePicture: ProfilePictureModel,
 }
