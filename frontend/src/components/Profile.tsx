@@ -32,15 +32,13 @@ export default function Profile(props: Props) {
     const [file, setFile] = useState<FileList | null>(null)
     const [fileName, setFileName] = useState(userDetails.profilePicture.fileName);
     const [fileUrl, setFileUrl] = useState(userDetails.profilePicture.fileUrl);
-    const [fileNameToUpdate, setFileNameToUpdate] = useState("");
-    const [fileUrlToUpdate, setFileUrlToUpdate] = useState("");
     const profilePictureUrl = "/api/pictures/files/";
     let fileData = new FormData();
-    fileData.append("file", file ? file[0] : new File([""], "baby_placeholder.jpg"));
+    fileData.append("file", file ? file[0] : new File([""], "placeholder.jpg"));
 
     const profilePicture = {
-        fileName: fileNameToUpdate,
-        fileUrl: fileUrlToUpdate
+        fileName: fileName,
+        fileUrl: fileUrl
     }
 
     const getUserDetails = () => {
@@ -92,18 +90,15 @@ export default function Profile(props: Props) {
                 "Content-Type": "multipart/form-data"
             }
         })
-            // .then((response) => setFileName(response.request.response))
             .then((response) => response)
             .then((response) => {
                 if (response.request.response) {
-                    setFileNameToUpdate(response.request.response);
+                    setFileName(response.request.response);
                 }
                 if (response.status === 200) {
                     setMessageStatus("Bild wurde erfolgreich hochgeladen");
-                    (setTimeout(() => updateUserDetails(), 500));
                     (setTimeout(() => setMessageStatus(""), 2000));
-                    (setTimeout(() => getUserDetails(), 2001));
-                    (setTimeout(() => setDoProfilePicture(false), 2002));
+                    (setTimeout(() => setDoProfilePicture(false), 2000));
                 }
             })
             .catch((error) => {
@@ -114,6 +109,12 @@ export default function Profile(props: Props) {
                 console.log("Error =>" + error)
             })
     }
+
+    let constructFileUrlToUpdate = () => {
+        setFileUrl(profilePictureUrl.concat(fileName))
+    }
+
+    useEffect(constructFileUrlToUpdate, [fileName])
 
     function deleteUser() {
         axios.delete("/api/chrat-users/" + id)
@@ -133,22 +134,6 @@ export default function Profile(props: Props) {
                 console.log("Error =>" + error)
             })
     }
-
-    const toggleDoEdit = () => {
-        setDoEdit(!doEdit);
-    }
-
-    let constructFileUrlToUpdate = () => {
-        setFileUrlToUpdate(profilePictureUrl.concat(fileNameToUpdate))
-    }
-
-    useEffect(constructFileUrlToUpdate, [fileNameToUpdate])
-
-    let constructFileUrl = () => {
-        setFileUrl(profilePictureUrl.concat(fileName))
-    }
-
-    useEffect(constructFileUrl, [fileName])
 
     const isValidEmail = (email: string) => {
         return /.@./.test(email);
@@ -187,25 +172,26 @@ export default function Profile(props: Props) {
             <StyledDeleteDiv1>
                 <StyledDeleteDiv2>
                     <StyledP>Bitte Profilbild auswählen</StyledP>
-                    <input type={"file"} onChange={(e) => setFile(e.target.files)}/>
+                    <input type={"file"} accept={"image/*"} onChange={(e) => setFile(e.target.files)}/>
                     <StyledDeleteDiv3>
                         <StyledButton onClick={() => setDoProfilePicture(false)}>Abbrechen</StyledButton>
                         <StyledButton onClick={handleUploadProfilePicture}>Hochladen</StyledButton>
                     </StyledDeleteDiv3>
                     {messageStatus && <StyledMessage>{messageStatus}</StyledMessage>}
+                    {error && <StyledErrorMessage>{error}</StyledErrorMessage>}
                 </StyledDeleteDiv2>
             </StyledDeleteDiv1>
         )}
         <StyledSection>
+
             <form onSubmit={handleUpdateUserDetails}>
                 <StyledDiv1>
                     {doEdit ?
-                        <StyledButton onClick={() => setDoProfilePicture(true)}>
+                        <StyledButton type="button" onClick={() => setDoProfilePicture(true)}>
                             <StyledImg src={fileUrl} alt={"Profil Bild"}/>
                         </StyledButton>
                         :
                         <StyledImg src={fileUrl} alt={"Profil Bild"}/>}
-
                     <StyledLabel htmlFor="username">Username:</StyledLabel>
                     <StyledInput type="text"
                                  id="username"
@@ -241,24 +227,29 @@ export default function Profile(props: Props) {
 
                 </StyledDiv1>
             </form>
-            <StyledDiv2>
-                {doEdit ?
-                    <StyledButton onClick={toggleDoEdit}>
-                        <Icon icon="material-symbols:cancel-rounded" inline={true}
-                              width="15"/> Abbrechen</StyledButton>
-                    :
-                    <StyledButton onClick={toggleDoEdit}>
+
+            {doEdit ?
+                <>
+                    <StyledDiv2>
+                        <StyledButton onClick={() => setDoEdit(false)}>
+                            <Icon icon="material-symbols:cancel-rounded" inline={true}
+                                  width="15"/> Abbrechen</StyledButton>
+                        <StyledButton disabled={!doEdit} onClick={handleUpdateUserDetails}>
+                            <Icon icon="mdi:user-check" inline={true} width="20"/> Speichern
+                        </StyledButton>
+                    </StyledDiv2>
+                    <StyledDiv3>
+                        <StyledDeleteButton onClick={() => setDoDelete(true)}>
+                            <Icon icon="material-symbols:delete-forever-rounded" inline={true} width="18"/> User Löschen
+                        </StyledDeleteButton>
+                    </StyledDiv3>
+                </>
+                :
+                <StyledDiv2>
+                    <StyledButton onClick={() => setDoEdit(true)}>
                         <Icon icon="mdi:edit" inline={true}
-                              width="15"/> Bearbeiten</StyledButton>}
-                <StyledButton disabled={!doEdit} onClick={handleUpdateUserDetails}>
-                    <Icon icon="mdi:user-check" inline={true} width="20"/> Speichern
-                </StyledButton>
-            </StyledDiv2>
-            <StyledDiv3>
-                <StyledDeleteButton onClick={() => setDoDelete(true)}>
-                    <Icon icon="material-symbols:delete-forever-rounded" inline={true} width="18"/> User Löschen
-                </StyledDeleteButton>
-            </StyledDiv3>
+                              width="15"/> Bearbeiten</StyledButton>
+                </StyledDiv2>}
             {error && <StyledErrorMessage>{error}</StyledErrorMessage>}
             {messageStatus && <StyledMessage>{messageStatus}</StyledMessage>}
         </StyledSection>
