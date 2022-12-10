@@ -405,9 +405,10 @@ const StyledModalDiv2 = styled.div`
   width: 100%;
   max-width: 45vw;
   background-color: var(--color-background);
-  border-radius: 5%;
+  border-radius: 2pc;
   @media (max-width: 768px) {
     max-width: 80vw;
+    border-radius: 5%;
   }
 `
 
