@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {ChratUserTokenModel} from "../security/ChratUserTokenModel";
 import {Icon} from "@iconify/react";
 import styled from "styled-components";
@@ -9,17 +9,16 @@ type Props = {
     user: ChratUserTokenModel
     userDetails: ChratUserModel
     logout: () => void
+    getUserDetails: () => void
 }
 
 export default function Profile(props: Props) {
 
-
-    const [id, setId] = useState(props.userDetails.id);
-    const [username, setUsername] = useState(props.userDetails.username);
     const [firstName, setFirstName] = useState(props.userDetails.firstName);
     const [lastName, setLastName] = useState(props.userDetails.lastName);
     const [email, setEmail] = useState(props.userDetails.email);
     const [messageStatus, setMessageStatus] = useState("");
+    const [pictureMessageStatus, setPictureMessageStatus] = useState("");
     const [error, setError] = useState("");
     const [doEdit, setDoEdit] = useState(false);
     const [doProfilePicture, setDoProfilePicture] = useState(false);
@@ -28,17 +27,16 @@ export default function Profile(props: Props) {
     const [file, setFile] = useState<FileList | null>(null);
     const [fileName, setFileName] = useState(props.userDetails.profilePicture.fileName);
     const [fileUrl, setFileUrl] = useState(props.userDetails.profilePicture.fileUrl);
-    const profilePictureUrl = "/api/pictures/files/";
+    const id = props.userDetails.id;
     let fileData = new FormData();
     fileData.append("file", file ? file[0] : new File([""], "placeholder.jpg"));
 
-    const profilePicture = {
-        fileName: fileName,
-        fileUrl: fileUrl
-    }
-
-    const updateUserDetails = () => {
-        axios.put("/api/chrat-users/" + id, {
+    const updateUserDetails = (fileName:string, fileUrl:string) => {
+        const profilePicture = {
+            fileName: fileName,
+            fileUrl: fileUrl
+        }
+        axios.put("/api/chrat-users/" + props.userDetails.id, {
             id,
             firstName,
             lastName,
@@ -71,12 +69,19 @@ export default function Profile(props: Props) {
             .then((response) => response)
             .then((response) => {
                 if (response.request.response) {
-                    setFileName(response.request.response);
+                    const profilePictureUrl = "/api/pictures/files/";
+                    let fileNameNew = response.request.response;
+                    let fileUrlNew = profilePictureUrl.concat(fileNameNew);
+                    setFileName(fileNameNew);
+                    setFileUrl(fileUrlNew)
+                    updateUserDetails(fileNameNew, fileUrlNew);
                 }
                 if (response.status === 200) {
-                    setMessageStatus("Bild wurde erfolgreich hochgeladen");
-                    (setTimeout(() => setMessageStatus(""), 2000));
-                    (setTimeout(() => setDoProfilePicture(false), 2000));
+                    setPictureMessageStatus("Bild wurde erfolgreich hochgeladen");
+                    (setTimeout(() => {
+                        setPictureMessageStatus("");
+                        setDoProfilePicture(false);
+                        props.getUserDetails();}, 2000));
                 }
             })
             .catch((error) => {
@@ -88,20 +93,13 @@ export default function Profile(props: Props) {
             })
     }
 
-    let constructFileUrlToUpdate = () => {
-        setFileUrl(profilePictureUrl.concat(fileName))
-    }
-
-    useEffect(constructFileUrlToUpdate, [fileName])
-
     function deleteUser() {
-        axios.delete("/api/chrat-users/" + id)
+        axios.delete("/api/chrat-users/" + props.userDetails.id)
             .then((response) => response.status)
             .then((status) => {
                 if (status === 204) {
-                    setMessageStatus(username + " wurde Erfolreich gelöscht");
-                    (setTimeout(() => setMessageStatus(""), 2000));
-                    (setTimeout(() => props.logout(), 2001));
+                    setMessageStatus(props.userDetails.username + " wurde Erfolreich gelöscht");
+                    (setTimeout(() => {setMessageStatus("");props.logout()}, 2000));
                 }
             })
             .catch((error) => {
@@ -126,7 +124,7 @@ export default function Profile(props: Props) {
         } else {
             setErrorMail("");
         }
-        updateUserDetails();
+        updateUserDetails(fileName, fileUrl);
     }
 
     function handleUploadProfilePicture(event: any) {
@@ -136,48 +134,48 @@ export default function Profile(props: Props) {
 
     return <>
         {doDelete && (
-            <StyledDeleteDiv1>
-                <StyledDeleteDiv2>
+            <StyledModalDiv1>
+                <StyledModalDiv2>
                     <StyledP>Möchtest du deinen Account wirklich in die Mülltonne werfen?</StyledP>
                     <StyledDeleteDiv3>
                         <StyledButton onClick={() => setDoDelete(false)}>Abbrechen</StyledButton>
                         <StyledDeleteButton onClick={deleteUser}>Löschen</StyledDeleteButton>
                     </StyledDeleteDiv3>
-                </StyledDeleteDiv2>
-            </StyledDeleteDiv1>
+                </StyledModalDiv2>
+            </StyledModalDiv1>
         )}
         {doProfilePicture && (
-            <StyledDeleteDiv1>
-                <StyledDeleteDiv2>
+            <StyledModalDiv1>
+                <StyledModalDiv2>
                     <StyledP>Bitte Profilbild auswählen</StyledP>
                     <StyledInput type={"file"} accept={"image/*"} onChange={(e) => setFile(e.target.files)}/>
                     <StyledDeleteDiv3>
                         <StyledButton onClick={() => setDoProfilePicture(false)}>Abbrechen</StyledButton>
                         <StyledButton onClick={handleUploadProfilePicture}>Hochladen</StyledButton>
                     </StyledDeleteDiv3>
-                    {messageStatus && <StyledMessage>{messageStatus}</StyledMessage>}
+                    {messageStatus && <StyledMessage>{pictureMessageStatus}</StyledMessage>}
                     {error && <StyledErrorMessage>{error}</StyledErrorMessage>}
-                </StyledDeleteDiv2>
-            </StyledDeleteDiv1>
+                </StyledModalDiv2>
+            </StyledModalDiv1>
         )}
         <StyledSection>
             <StyledDiv4>
                 {doEdit ?
-                <StyledEditPictureButton type="button" onClick={() => setDoProfilePicture(true)}>
-                    <StyledImg src={fileUrl} alt={"Profil Bild"}/>
-                <StyledDiv5>
-                    <Icon icon="fluent:send-copy-24-filled" color="var(--color-white)" width="50"/>
-                </StyledDiv5>
-                </StyledEditPictureButton>
-                :
-                <StyledImg src={fileUrl} alt={"Profil Bild"}/>}
+                    <StyledEditPictureButton type="button" onClick={() => {setDoProfilePicture(true); setDoEdit(false)}}>
+                        <StyledImg src={fileUrl} alt={"Profil Bild"}/>
+                        <StyledDiv5>
+                            <Icon icon="fluent:send-copy-24-filled" color="var(--color-white)" width="50"/>
+                        </StyledDiv5>
+                    </StyledEditPictureButton>
+                    :
+                    <StyledImg src={fileUrl} alt={"Profil Bild"}/>}
             </StyledDiv4>
             <form onSubmit={handleUpdateUserDetails}>
                 <StyledDiv1>
                     <StyledLabel htmlFor="username">Username:</StyledLabel>
                     <StyledInput type="text"
                                  id="username"
-                                 value={username}
+                                 value={props.userDetails.username}
                                  disabled={true}
                                  required/>
 
@@ -249,6 +247,9 @@ const StyledSection = styled.section`
   border-radius: 1pc;
   box-shadow: 0 .0625rem .5rem 0 rgba(0, 0, 0, .5), 0 .0625rem .3125rem 0 rgba(0, 0, 0, .5);
   background-color: var(--color-background);
+  @media (max-width: 768px) {
+    width: 85%;
+  }
 `
 
 const StyledDiv1 = styled.div`
@@ -280,6 +281,10 @@ const StyledMessage = styled.p`
   padding: 8px;
   font-size: 1rem;
   color: var(--color-text);
+  @media (max-width: 768px) {
+    margin: 10px 0 0 0;
+    padding: 0;
+  }
 `
 
 const StyledErrorMessage = styled.p`
@@ -287,6 +292,10 @@ const StyledErrorMessage = styled.p`
   padding: 8px;
   font-size: 1rem;
   color: var(--color-red);
+  @media (max-width: 768px) {
+    margin: 10px 0 0 0;
+    padding: 0;
+  }
 `
 
 const StyledButton = styled.button`
@@ -374,7 +383,7 @@ const StyledP = styled.p`
   text-shadow: 0 0 10px var(--color-input-shadow);
 `
 
-const StyledDeleteDiv1 = styled.div`
+const StyledModalDiv1 = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -386,7 +395,7 @@ const StyledDeleteDiv1 = styled.div`
   z-index: 1;
 `
 
-const StyledDeleteDiv2 = styled.div`
+const StyledModalDiv2 = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -396,6 +405,10 @@ const StyledDeleteDiv2 = styled.div`
   width: 100%;
   max-width: 45vw;
   background-color: var(--color-background);
+  border-radius: 5%;
+  @media (max-width: 768px) {
+    max-width: 80vw;
+  }
 `
 
 const StyledDeleteDiv3 = styled.div`

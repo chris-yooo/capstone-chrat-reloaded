@@ -46,13 +46,13 @@ export default function LoggedInPage(props: Props) {
         </StyledHeader>
         <StyledNav>
             <StyledButton onClick={() => setUserPictureMenu(!userPictureMenu)}>
-            <StyledImg src={userDetails.profilePicture.fileUrl} alt="Profile Picture"/>
-                </StyledButton>
+                <StyledImg src={userDetails.profilePicture.fileUrl} alt="Profile Picture"/>
+            </StyledButton>
             {userPictureMenu &&
                 <StyledPictureMenu>
-                    <button onClick={() => nlink("/Profile")}>Profile</button>
-                    <button onClick={() => nlink("/")}>Mainchat</button>
-                    <button onClick={() => logout()}>Logout</button>
+                    <StyledButton2 onClick={() => {nlink("/profile"); setUserPictureMenu(false)}}>Profile</StyledButton2>
+                    <StyledButton2 onClick={() => {nlink("/"); setUserPictureMenu(false)}}>Mainchat</StyledButton2>
+                    <StyledLogoutButton onClick={() => {logout(); setUserPictureMenu(false)}}>Logout</StyledLogoutButton>
                 </StyledPictureMenu>
             }
         </StyledNav>
@@ -60,7 +60,7 @@ export default function LoggedInPage(props: Props) {
             <Routes>
                 <Route path="/" element={<MainChat user={props.user}/>}/>
                 <Route path="/profile"
-                       element={<Profile user={props.user} userDetails={userDetails} logout={logout}/>}/>
+                       element={<Profile user={props.user} userDetails={userDetails} logout={logout} getUserDetails={getUserDetails}/>}/>
             </Routes>
         </StyledMain>
         <StyledFooter>
@@ -124,24 +124,86 @@ const StyledButton = styled.button`
 `
 
 const StyledPictureMenu = styled.div`
+  position: relative;
+  padding: 5px;
+  left: -37px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-self: center;
-  padding: 20px;
   margin-bottom: 0;
-  font-size: 1.1rem;
+  color: var(--color-white);
+  background-color: var(--color-grey);
+  border-radius: 5px;
+  @media (max-width: 768px) {
+    top: 0;
+    left: 1vw;
+  }
 `
 
 const StyledNav = styled.nav`
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 3.5vh;
+  left: 8vw;
+  @media (max-width: 768px) {
+    position: absolute;
+    top: 1vh;
+    left: 1vw;
+  }
 `
 
 const StyledImg = styled.img`
-  width: 125px;
-  height: 125px;
+  width: 75px;
+  height: 75px;
   object-fit: cover;
   border-radius: 50%;
+  @media (max-width: 768px) {
+    width: 50px;
+    height: 50px;
+`
+
+const StyledButton2 = styled.button`
+  margin: 3px;
+  padding: 10px;
+  width: 140px;
+  transition-duration: 0.4s;
+  background-color: var(--color-button-background);
+  color: var(--color-text);
+  border: none;
+  font-size: 1rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: var(--color-button-hover);
+  }
+
+  &:active {
+    background-color: var(--color-button-active);
+  }
+`
+
+const StyledLogoutButton = styled.button`
+  margin: 3px;
+  padding: 10px;
+  width: 140px;
+  transition-duration: 0.4s;
+  background-color: var(--color-button-delete-red);
+  color: var(--color-text);
+  border: none;
+  font-size: 1rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: var(--color-red);
+  }
+
+  &:active {
+    background-color: var(--color-button-active);
+  }
 `

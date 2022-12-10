@@ -107,6 +107,9 @@ const StyledSection = styled.section`
   border-radius: 1pc;
   box-shadow: 0 .0625rem .5rem 0 rgba(0, 0, 0, .5), 0 .0625rem .3125rem 0 rgba(0, 0, 0, .5);
   background-color: var(--color-background);
+  @media (max-width: 768px) {
+    width: 85%;
+  }
 `
 
 const StyledUl = styled.ul`
@@ -114,13 +117,14 @@ const StyledUl = styled.ul`
   width: 80%;
   overflow: auto;
   overflow-scrolling: inherit;
-
   @media (max-height: 700px) {
     height: 50vh;
   }
-
   @media (max-height: 500px) {
     height: 40vh;
+  }
+  @media (max-width: 768px) {
+    width: 100%;
   }
 `
 
@@ -140,7 +144,11 @@ const StyledLi = styled.li`
 const StyledSpan = styled.span`
   position: fixed;
   top: 20px;
-  left: 20px;
+  right: 20px;
+  @media (max-width: 768px) {
+    top: 1vh;
+    right: 2vw;
+  }
 `
 
 const StyledDiv1 = styled.div`
@@ -152,6 +160,9 @@ const StyledDiv1 = styled.div`
   background: #d9d9d9;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
   border-radius: 12px;
+  @media (max-width: 768px) {
+    width: 350px;
+  }
 `;
 
 const StyledInputForm = styled.form`
