@@ -95,4 +95,11 @@ public class ChratService {
         return chratRepository.findByUsername(usernameFromSession)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, notFound));
     }
+
+
+    public void deleteUnusedToken(String usernameFromSession) {
+        if (chratUserTokenRepository.findByUsername(usernameFromSession).isPresent()) {
+            chratUserTokenRepository.deleteAllByUsername(usernameFromSession);
+        }
+    }
 }

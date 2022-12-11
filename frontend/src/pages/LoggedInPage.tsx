@@ -10,7 +10,7 @@ import {ChratUserModel} from "../components/ChratUserModel";
 
 type Props = {
     user: ChratUserTokenModel
-    onLogout: () => void
+    fetchUsername: () => void
 }
 
 export default function LoggedInPage(props: Props) {
@@ -35,7 +35,7 @@ export default function LoggedInPage(props: Props) {
     const logout = () => {
         axios.get("/api/chrat-users/logout")
             .then(response => response.data)
-            .then(props.onLogout)
+            .then(props.fetchUsername)
             .then(() => nlink("/"))
     }
 
@@ -50,7 +50,7 @@ export default function LoggedInPage(props: Props) {
             </StyledButton>
             {userPictureMenu &&
                 <StyledPictureMenu>
-                    <StyledButton2 onClick={() => {nlink("/profile"); setUserPictureMenu(false)}}>Profile</StyledButton2>
+                    <StyledButton2 onClick={() => {nlink("/profile"); setUserPictureMenu(false); props.fetchUsername()}}>Profile</StyledButton2>
                     <StyledButton2 onClick={() => {nlink("/"); setUserPictureMenu(false)}}>Mainchat</StyledButton2>
                     <StyledLogoutButton onClick={() => {logout(); setUserPictureMenu(false)}}>Logout</StyledLogoutButton>
                 </StyledPictureMenu>

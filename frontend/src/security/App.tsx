@@ -25,5 +25,5 @@ export default function App() {
     if (user.username === 'anonymousUser') {
         return <LoginPage fetchUsername={fetchUsername}></LoginPage>
     }
-    return <LoggedInPage user={user} onLogout={fetchUsername}></LoggedInPage>
+    return <LoggedInPage user={user} fetchUsername={fetchUsername}></LoggedInPage>
 }
