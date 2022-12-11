@@ -70,6 +70,11 @@ public class ChratUserController {
 
     @GetMapping("/logout")
     public void logout(HttpSession httpSession) {
+        String usernameFromSession = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+        chratService.deleteUnusedToken(usernameFromSession);
         httpSession.invalidate();
     }
 }

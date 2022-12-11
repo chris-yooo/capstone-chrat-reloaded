@@ -31,7 +31,7 @@ export default function Profile(props: Props) {
     let fileData = new FormData();
     fileData.append("file", file ? file[0] : new File([""], "placeholder.jpg"));
 
-    const updateUserDetails = (fileName:string, fileUrl:string) => {
+    const updateUserDetails = (fileName: string, fileUrl: string) => {
         const profilePicture = {
             fileName: fileName,
             fileUrl: fileUrl
@@ -81,7 +81,8 @@ export default function Profile(props: Props) {
                     (setTimeout(() => {
                         setPictureMessageStatus("");
                         setDoProfilePicture(false);
-                        props.getUserDetails();}, 2000));
+                        props.getUserDetails();
+                    }, 2000));
                 }
             })
             .catch((error) => {
@@ -99,7 +100,10 @@ export default function Profile(props: Props) {
             .then((status) => {
                 if (status === 204) {
                     setMessageStatus(props.userDetails.username + " wurde Erfolreich gelöscht");
-                    (setTimeout(() => {setMessageStatus("");props.logout()}, 2000));
+                    (setTimeout(() => {
+                        setMessageStatus("");
+                        props.logout()
+                    }, 2000));
                 }
             })
             .catch((error) => {
@@ -161,7 +165,10 @@ export default function Profile(props: Props) {
         <StyledSection>
             <StyledDiv4>
                 {doEdit ?
-                    <StyledEditPictureButton type="button" onClick={() => {setDoProfilePicture(true); setDoEdit(false)}}>
+                    <StyledEditPictureButton type="button" onClick={() => {
+                        setDoProfilePicture(true);
+                        setDoEdit(false)
+                    }}>
                         <StyledImg src={fileUrl} alt={"Profil Bild"}/>
                         <StyledDiv5>
                             <Icon icon="fluent:send-copy-24-filled" color="var(--color-white)" width="50"/>
