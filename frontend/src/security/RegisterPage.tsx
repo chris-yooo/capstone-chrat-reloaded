@@ -175,17 +175,16 @@ const StyledSection = styled.section`
   border-radius: 1pc;
   box-shadow: 0 .0625rem .5rem 0 rgba(0, 0, 0, .5), 0 .0625rem .3125rem 0 rgba(0, 0, 0, .5);
   background-color: var(--color-background);
+  @media (max-width: 768px) {
+    width: 85%;
+  }
 `
 
 const StyledDiv1 = styled.div`
   width: 80%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin: 20px;
+  margin: 0 0 20px 0;
   padding: 10px;
-`;
+`
 
 const StyledDiv2 = styled.div`
   display: flex;
