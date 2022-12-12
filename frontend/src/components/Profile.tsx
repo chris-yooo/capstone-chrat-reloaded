@@ -36,7 +36,7 @@ export default function Profile(props: Props) {
             fileName: fileName,
             fileUrl: fileUrl
         }
-        axios.put("/api/chrat-users/" + props.userDetails.id, {
+        axios.put("/api/chrat-users/" + id, {
             id,
             firstName,
             lastName,
@@ -95,7 +95,7 @@ export default function Profile(props: Props) {
     }
 
     function deleteUser() {
-        axios.delete("/api/chrat-users/" + props.userDetails.id)
+        axios.delete("/api/chrat-users/" + id)
             .then((response) => response.status)
             .then((status) => {
                 if (status === 204) {
