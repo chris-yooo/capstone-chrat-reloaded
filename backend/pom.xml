@@ -15,6 +15,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>backend</name>
     <description>backend</description>
+    <packaging>war</packaging>
 
     <properties>
         <java.version>19</java.version>
