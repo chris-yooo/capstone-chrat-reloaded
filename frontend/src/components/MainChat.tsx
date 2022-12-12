@@ -22,7 +22,8 @@ export default function MainChat(props: Props) {
     if (host === "localhost:3000") {
         baseUrl = "ws://localhost:8080"
     } else {
-        baseUrl = "wss://" + host;
+        // baseUrl = "wss://" + host;
+        baseUrl = "ws://" + host;
     }
 
     const wsServiceUrl = baseUrl + '/api/mainchat';
