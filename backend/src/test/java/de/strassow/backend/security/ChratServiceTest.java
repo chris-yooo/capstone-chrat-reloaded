@@ -258,6 +258,7 @@ class ChratServiceTest {
         ChratUserToken chratUserToken = new ChratUserToken("1", "chris_yooo");
         // when
         when(chratUserTokenRepository.findByUsername(username)).thenReturn(Optional.of(chratUserToken));
+        when(chratUserTokenRepository.deleteByUsername(username)).thenReturn(chratUserToken);
         // then
         assertTrue(chratService.deleteUnusedToken(username));
     }
