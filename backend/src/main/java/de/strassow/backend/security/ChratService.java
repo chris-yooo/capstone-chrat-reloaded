@@ -97,9 +97,11 @@ public class ChratService {
     }
 
 
-    public void deleteUnusedToken(String usernameFromSession) {
+    public boolean deleteUnusedToken(String usernameFromSession) {
         if (chratUserTokenRepository.findByUsername(usernameFromSession).isPresent()) {
             chratUserTokenRepository.deleteAllByUsername(usernameFromSession);
+            return true;
         }
+        return false;
     }
 }

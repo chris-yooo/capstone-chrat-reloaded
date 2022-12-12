@@ -7,7 +7,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class ChratServiceTest {
@@ -249,5 +249,26 @@ class ChratServiceTest {
         }
         //then
         assertEquals("User not found", message);
+    }
+
+    @Test
+    void deleteTokenAfterLogoutIsOk() {
+        // given
+        String username = "chris_yooo";
+        ChratUserToken chratUserToken = new ChratUserToken("1", "chris_yooo");
+        // when
+        when(chratUserTokenRepository.findByUsername(username)).thenReturn(Optional.of(chratUserToken));
+        // then
+        assertTrue(chratService.deleteUnusedToken(username));
+    }
+
+    @Test
+    void deleteTokenAfterLogoutIsNotOk() {
+        // given
+        String username = "chris_yooo";
+        // when
+        when(chratUserTokenRepository.findByUsername(username)).thenReturn(Optional.empty());
+        // then
+        assertFalse(chratService.deleteUnusedToken(username));
     }
 }
