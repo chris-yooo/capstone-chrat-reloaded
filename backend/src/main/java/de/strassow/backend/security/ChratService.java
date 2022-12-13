@@ -104,4 +104,22 @@ public class ChratService {
         }
         return false;
     }
+
+    public ChratUser updateUsernameProfile(DtoUpdateUsername dtoUpdateUsername) {
+        if (chratRepository.findByUsername(dtoUpdateUsername.username()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exists");
+        }
+        ChratUser chratUser = chratRepository.findById(dtoUpdateUsername.id())
+                .orElseThrow(() -> new RuntimeException(notFound));
+        ChratUser updatedChratUser = new ChratUser(
+                chratUser.id(),
+                dtoUpdateUsername.username(),
+                chratUser.passwordBcrypt(),
+                chratUser.firstName(),
+                chratUser.lastName(),
+                chratUser.email(),
+                chratUser.profilePicture()
+        );
+        return chratRepository.save(updatedChratUser);
+    }
 }

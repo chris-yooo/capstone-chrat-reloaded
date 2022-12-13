@@ -77,4 +77,12 @@ public class ChratUserController {
         chratService.deleteUnusedToken(usernameFromSession);
         httpSession.invalidate();
     }
+
+    @PutMapping("/username/{id}")
+    public ChratUser profileUsernameUpdate(@PathVariable String id, @RequestBody DtoUpdateUsername dtoUpdateUsername) {
+        if (!dtoUpdateUsername.id().equals(id)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The username you want to update not equals to your req Body user.id");
+        }
+        return chratService.updateUsernameProfile(dtoUpdateUsername);
+    }
 }
