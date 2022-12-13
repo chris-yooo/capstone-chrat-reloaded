@@ -272,4 +272,53 @@ class ChratServiceTest {
         // then
         assertFalse(chratService.deleteUnusedToken(username));
     }
+
+    @Test
+    void updateProfileUsernameOk() {
+        // given
+        ChratUser oldChratUser = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com", profilePicture);
+        DtoUpdateUsername dtoUpdateUsername = new DtoUpdateUsername("1", "chris_yo");
+        ChratUser newChratUser = new ChratUser("1", "chris_yo", "pw", "Chris", "Yoo", "fsagfg@gmail.com", profilePicture);
+        // when
+        when(chratRepository.findByUsername(dtoUpdateUsername.username())).thenReturn(Optional.empty());
+        when(chratRepository.findById(dtoUpdateUsername.id())).thenReturn(Optional.of(oldChratUser));
+        when(chratRepository.save(newChratUser)).thenReturn(newChratUser);
+        ChratUser actual = chratService.updateProfileUsername(dtoUpdateUsername);
+        // then
+        assertEquals(newChratUser, actual);
+    }
+
+    @Test
+    void updateProfileUsernameAlreadyExists() {
+        // given
+        ChratUser oldChratUser = new ChratUser("1", "chris_yooo", "pw", "Chris", "Yoo", "fsagfg@gmail.com", profilePicture);
+        DtoUpdateUsername dtoUpdateUsername = new DtoUpdateUsername("1", "chris_yooo");
+        // when
+        when(chratRepository.findByUsername(dtoUpdateUsername.username())).thenReturn(Optional.of(oldChratUser));
+        String message = null;
+        try {
+            chratService.updateProfileUsername(dtoUpdateUsername);
+        } catch (ResponseStatusException e) {
+            message = e.getReason();
+        }
+        // then
+        assertEquals("Username already exists", message);
+    }
+
+    @Test
+    void updateProfileUsernameIdFalse() {
+        // given
+        DtoUpdateUsername dtoUpdateUsername = new DtoUpdateUsername("1", "chris_yooo");
+        // when
+        when(chratRepository.findByUsername(dtoUpdateUsername.username())).thenReturn(Optional.empty());
+        when(chratRepository.findById(dtoUpdateUsername.id())).thenReturn(Optional.empty());
+        String message = null;
+        try {
+            chratService.updateProfileUsername(dtoUpdateUsername);
+        } catch (RuntimeException e) {
+            message = e.getMessage();
+        }
+        // then
+        assertEquals("User not found", message);
+    }
 }
