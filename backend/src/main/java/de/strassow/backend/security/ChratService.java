@@ -105,9 +105,9 @@ public class ChratService {
         return false;
     }
 
-    public ChratUser updateUsernameProfile(DtoUpdateUsername dtoUpdateUsername) {
+    public ChratUser updateProfileUsername(DtoUpdateUsername dtoUpdateUsername) {
         if (chratRepository.findByUsername(dtoUpdateUsername.username()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exists");
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Username already exists");
         }
         ChratUser chratUser = chratRepository.findById(dtoUpdateUsername.id())
                 .orElseThrow(() -> new RuntimeException(notFound));

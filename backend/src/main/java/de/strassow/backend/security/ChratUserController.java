@@ -83,6 +83,6 @@ public class ChratUserController {
         if (!dtoUpdateUsername.id().equals(id)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The username you want to update not equals to your req Body user.id");
         }
-        return chratService.updateUsernameProfile(dtoUpdateUsername);
+        return chratService.updateProfileUsername(dtoUpdateUsername);
     }
 }
