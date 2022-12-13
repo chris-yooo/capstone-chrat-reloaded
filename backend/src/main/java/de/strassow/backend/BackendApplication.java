@@ -19,7 +19,7 @@ public class BackendApplication implements CommandLineRunner {
     @Override
     public void run(String... arg) {
         //for first use activate these 2 lines
-        storageService.deleteAll();
-        storageService.init();
+        //storageService.deleteAll();
+        //storageService.init();
     }
 }
