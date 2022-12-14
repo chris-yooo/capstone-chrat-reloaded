@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ChratUserTokenModel} from "../security/ChratUserTokenModel";
 import {Icon} from "@iconify/react";
 import styled from "styled-components";
@@ -14,13 +14,17 @@ type Props = {
 
 export default function Profile(props: Props) {
 
+    const [username, setUsername] = useState(props.userDetails.username);
     const [firstName, setFirstName] = useState(props.userDetails.firstName);
     const [lastName, setLastName] = useState(props.userDetails.lastName);
     const [email, setEmail] = useState(props.userDetails.email);
     const [messageStatus, setMessageStatus] = useState("");
     const [pictureMessageStatus, setPictureMessageStatus] = useState("");
+    const [usernameMessageStatus, setUsernameMessageStatus] = useState("");
     const [error, setError] = useState("");
+    const [usernameError, setUsernameError] = useState("");
     const [doEdit, setDoEdit] = useState(false);
+    const [doEditUsername, setDoEditUsername] = useState(false);
     const [doProfilePicture, setDoProfilePicture] = useState(false);
     const [doDelete, setDoDelete] = useState(false);
     const [errorMail, setErrorMail] = useState("");
@@ -30,6 +34,15 @@ export default function Profile(props: Props) {
     const id = props.userDetails.id;
     let fileData = new FormData();
     fileData.append("file", file ? file[0] : new File([""], "placeholder.jpg"));
+
+    useEffect(() => {
+        setUsername(props.userDetails.username);
+        setFirstName(props.userDetails.firstName);
+        setLastName(props.userDetails.lastName);
+        setEmail(props.userDetails.email);
+        setFileName(props.userDetails.profilePicture.fileName);
+        setFileUrl(props.userDetails.profilePicture.fileUrl);
+    }, [props.userDetails]);
 
     const updateUserDetails = (fileName: string, fileUrl: string) => {
         const profilePicture = {
@@ -131,9 +144,56 @@ export default function Profile(props: Props) {
         updateUserDetails(fileName, fileUrl);
     }
 
+    const usernameChange = () => {
+        axios.put("/api/chrat-users/username/" + id, {
+            id,
+            username
+        })
+            .then((response) => response.status)
+            .then((status) => {
+                if (status === 200) {
+                    setUsernameMessageStatus("Erfolgreich geändert");
+                    setDoEdit(false);
+                    (setTimeout(() => {
+                        setUsernameMessageStatus("");
+                        setDoEditUsername(false);
+                    }, 2000));
+                }
+            })
+            .catch((error) => {
+                if (error.response.status === 400) {
+                    setUsernameError("Fehler beim Ändern");
+                    setUsername(props.userDetails.username);
+                    (setTimeout(() => setUsernameError(""), 5000));
+                }
+                if (error.response.status === 406) {
+                    setUsernameError("Username ist schon vergben");
+                    setUsername(props.userDetails.username);
+                    (setTimeout(() => setUsernameError(""), 5000));
+                }
+                console.log("Error =>" + error)
+            })
+    }
+
     function handleUploadProfilePicture(event: any) {
         event.preventDefault()
         uploadProfilePicture();
+    }
+
+    const usernameRegEx = (username: string) => {
+        return /^[a-zA-Z0-9_-]{3,20}$/.test(username);
+    }
+
+    const handleUsernameChange = () => {
+        if (!usernameRegEx(username)) {
+            setUsernameError("Unerlaubte Zeichen!");
+            setUsername(props.userDetails.username);
+            (setTimeout(() => setError(""), 5000));
+            return;
+        } else {
+            setUsernameError("");
+        }
+        usernameChange();
     }
 
     return <>
@@ -162,6 +222,26 @@ export default function Profile(props: Props) {
                 </StyledModalDiv2>
             </StyledModalDiv1>
         )}
+        {doEditUsername && (
+            <StyledModalDiv1>
+                <StyledModalDiv2>
+                    <StyledP>Bitte neuen Username wählen</StyledP>
+                    <StyledP2>Erlaubt sind: Groß & Klein-buchstaben, _ - und Zahlen</StyledP2>
+                    <StyledInput type="text"
+                                 id="username"
+                                 value={username}
+                                 onChange={(e) => setUsername(e.target.value)}
+                                 disabled={!doEditUsername}
+                                 required/>
+                    <StyledDeleteDiv3>
+                        <StyledButton onClick={() => setDoEditUsername(false)}>Abbrechen</StyledButton>
+                        <StyledButton onClick={handleUsernameChange}>Speichern</StyledButton>
+                    </StyledDeleteDiv3>
+                    {usernameMessageStatus && <StyledMessage>{usernameMessageStatus}</StyledMessage>}
+                    {usernameError && <StyledErrorMessage>{usernameError}</StyledErrorMessage>}
+                </StyledModalDiv2>
+            </StyledModalDiv1>
+        )}
         <StyledSection>
             <StyledDiv4>
                 {doEdit ?
@@ -182,8 +262,8 @@ export default function Profile(props: Props) {
                     <StyledLabel htmlFor="username">Username:</StyledLabel>
                     <StyledInput type="text"
                                  id="username"
-                                 value={props.userDetails.username}
-                                 disabled={true}
+                                 value={username}
+                                 disabled={!doEditUsername}
                                  required/>
 
                     <StyledLabel htmlFor="firstname">Vorname:</StyledLabel>
@@ -218,6 +298,19 @@ export default function Profile(props: Props) {
             {doEdit ?
                 <>
                     <StyledDiv2>
+                        <StyledDiv3>
+                            <StyledDeleteButton onClick={() => setDoDelete(true)}>
+                                <Icon icon="material-symbols:delete-forever-rounded" inline={true} width="18"/> User
+                                Löschen
+                            </StyledDeleteButton>
+                        </StyledDiv3>
+                        <StyledDiv3>
+                            <StyledButton onClick={() => setDoEditUsername(true)}>
+                                <Icon icon="mdi:user-edit" inline={true} width="19"/> Username
+                            </StyledButton>
+                        </StyledDiv3>
+                    </StyledDiv2>
+                    <StyledDiv2>
                         <StyledButton onClick={() => setDoEdit(false)}>
                             <Icon icon="material-symbols:cancel-rounded" inline={true}
                                   width="15"/> Abbrechen</StyledButton>
@@ -225,11 +318,7 @@ export default function Profile(props: Props) {
                             <Icon icon="mdi:user-check" inline={true} width="20"/> Speichern
                         </StyledButton>
                     </StyledDiv2>
-                    <StyledDiv3>
-                        <StyledDeleteButton onClick={() => setDoDelete(true)}>
-                            <Icon icon="material-symbols:delete-forever-rounded" inline={true} width="18"/> User Löschen
-                        </StyledDeleteButton>
-                    </StyledDiv3>
+
                 </>
                 :
                 <StyledDiv2>
@@ -261,7 +350,7 @@ const StyledSection = styled.section`
 
 const StyledDiv1 = styled.div`
   width: 80%;
-  margin: 0 0 20px 0;
+  margin: 0 0 10px 0;
   padding: 10px;
 `
 
@@ -269,7 +358,6 @@ const StyledDiv2 = styled.div`
   display: flex;
   justify-content: center;
   align-self: center;
-  padding: 20px;
   margin-bottom: 0;
   font-size: 1.1rem;
 `
@@ -279,7 +367,7 @@ const StyledDiv3 = styled.div`
   justify-content: center;
   align-self: center;
   padding: 0;
-  margin-bottom: 23px;
+  //margin-bottom: 23px;
   font-size: 1.1rem;
 `
 
@@ -386,6 +474,15 @@ const StyledP = styled.p`
   font-style: normal;
   font-weight: 400;
   font-size: 1.3rem;
+  color: var(--color-white);
+  text-shadow: 0 0 10px var(--color-input-shadow);
+`
+const StyledP2 = styled.p`
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.2rem;
   color: var(--color-white);
   text-shadow: 0 0 10px var(--color-input-shadow);
 `

@@ -50,9 +50,19 @@ export default function LoggedInPage(props: Props) {
             </StyledButton>
             {userPictureMenu &&
                 <StyledPictureMenu>
-                    <StyledButton2 onClick={() => {nlink("/profile"); setUserPictureMenu(false); props.fetchUsername()}}>Profile</StyledButton2>
-                    <StyledButton2 onClick={() => {nlink("/"); setUserPictureMenu(false)}}>Mainchat</StyledButton2>
-                    <StyledLogoutButton onClick={() => {logout(); setUserPictureMenu(false)}}>Logout</StyledLogoutButton>
+                    <StyledButton2 onClick={() => {
+                        nlink("/profile");
+                        setUserPictureMenu(false);
+                        props.fetchUsername()
+                    }}>Profile</StyledButton2>
+                    <StyledButton2 onClick={() => {
+                        nlink("/");
+                        setUserPictureMenu(false)
+                    }}>Mainchat</StyledButton2>
+                    <StyledLogoutButton onClick={() => {
+                        logout();
+                        setUserPictureMenu(false)
+                    }}>Logout</StyledLogoutButton>
                 </StyledPictureMenu>
             }
         </StyledNav>
@@ -60,7 +70,8 @@ export default function LoggedInPage(props: Props) {
             <Routes>
                 <Route path="/" element={<MainChat user={props.user}/>}/>
                 <Route path="/profile"
-                       element={<Profile user={props.user} userDetails={userDetails} logout={logout} getUserDetails={getUserDetails}/>}/>
+                       element={<Profile user={props.user} userDetails={userDetails} logout={logout}
+                                         getUserDetails={getUserDetails}/>}/>
             </Routes>
         </StyledMain>
         <StyledFooter>
