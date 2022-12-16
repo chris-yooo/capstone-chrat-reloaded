@@ -17,8 +17,8 @@ export default function RegisterPage(props: Props) {
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [failedUsername, setFailedUsername] = useState('')
-    const [messageStatus, setMessageStatus] = useState('')
+    const [failedUsername, setFailedUsername] = useState("")
+    const [messageStatus, setMessageStatus] = useState("")
     const [errorMail, setErrorMail] = useState("");
 
     const register = () => {
@@ -32,7 +32,7 @@ export default function RegisterPage(props: Props) {
             .then((response) => response.status)
             .then((status) => {
                 if (status === 200) {
-                    setMessageStatus(username + " erfolreich registriert.");
+                    setMessageStatus(username + " erfolgreich registriert.");
                     (setTimeout(() => props.wouldLikeRegister(false), 2000));
                     (setTimeout(() => login(), 2000));
                     setUsername("");
@@ -45,7 +45,7 @@ export default function RegisterPage(props: Props) {
             })
             .catch((error) => {
                 if (error.response.status === 400) {
-                    setFailedUsername(username + " existiert schon.");
+                    setFailedUsername(username + " ist schon vergeben");
                     (setTimeout(() => setFailedUsername(""), 5000));
                     setUsername("");
                 }
@@ -57,7 +57,7 @@ export default function RegisterPage(props: Props) {
         axios.get("/api/chrat-users/login", {
             auth: {
                 username,
-                password
+                password,
             }
         })
             .then(props.fetchUsername)

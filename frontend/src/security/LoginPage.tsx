@@ -26,6 +26,7 @@ export default function LoginPage(props: Props) {
             .then((status) => {
                 if (status === 200) {
                     setMessageStatus("Erfolgreich eingeloggt");
+                    setError("");
                     (setTimeout(() => {
                         setMessageStatus("");
                         props.fetchUsername()
@@ -34,6 +35,7 @@ export default function LoginPage(props: Props) {
             })
             .catch((error) => {
                 if (error.response.status === 401) {
+                    setMessageStatus("");
                     setError("Username oder Passwort Falsch");
                     (setTimeout(() => setError(""), 5000));
                 }

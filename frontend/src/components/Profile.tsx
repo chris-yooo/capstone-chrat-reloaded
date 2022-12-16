@@ -305,20 +305,19 @@ export default function Profile(props: Props) {
                             </StyledDeleteButton>
                         </StyledDiv3>
                         <StyledDiv3>
-                            <StyledButton onClick={() => setDoEditUsername(true)}>
+                            <StyledBlueButton onClick={() => setDoEditUsername(true)}>
                                 <Icon icon="mdi:user-edit" inline={true} width="19"/> Username
-                            </StyledButton>
+                            </StyledBlueButton>
                         </StyledDiv3>
                     </StyledDiv2>
                     <StyledDiv2>
                         <StyledButton onClick={() => setDoEdit(false)}>
                             <Icon icon="material-symbols:cancel-rounded" inline={true}
                                   width="15"/> Abbrechen</StyledButton>
-                        <StyledButton disabled={!doEdit} onClick={handleUpdateUserDetails}>
+                        <StyledGreenButton disabled={!doEdit} onClick={handleUpdateUserDetails}>
                             <Icon icon="mdi:user-check" inline={true} width="20"/> Speichern
-                        </StyledButton>
+                        </StyledGreenButton>
                     </StyledDiv2>
-
                 </>
                 :
                 <StyledDiv2>
@@ -367,7 +366,6 @@ const StyledDiv3 = styled.div`
   justify-content: center;
   align-self: center;
   padding: 0;
-  //margin-bottom: 23px;
   font-size: 1.1rem;
 `
 
@@ -451,7 +449,7 @@ const StyledDeleteButton = styled.button`
   padding: 10px;
   width: 150px;
   transition-duration: 0.4s;
-  background-color: var(--color-button-delete-red);
+  background-color: var(--color-button-darker-red);
   color: var(--color-text);
   border: none;
   font-size: 1rem;
@@ -469,6 +467,52 @@ const StyledDeleteButton = styled.button`
   }
 `
 
+const StyledGreenButton = styled.button`
+  margin: 3px;
+  padding: 10px;
+  width: 150px;
+  transition-duration: 0.4s;
+  background-color: var(--color-button-darker-green);
+  color: var(--color-text);
+  border: none;
+  font-size: 1rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: var(--color-green);
+  }
+
+  &:active {
+    background-color: var(--color-green);
+  }
+`
+
+const StyledBlueButton = styled.button`
+  margin: 3px;
+  padding: 10px;
+  width: 150px;
+  transition-duration: 0.4s;
+  background-color: var(--color-button-darker-blue);
+  color: var(--color-text);
+  border: none;
+  font-size: 1rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: var(--color-blue);
+  }
+
+  &:active {
+    background-color: var(--color-blue);
+  }
+`
+
 const StyledP = styled.p`
   font-family: 'Inter', sans-serif;
   font-style: normal;
@@ -477,6 +521,7 @@ const StyledP = styled.p`
   color: var(--color-white);
   text-shadow: 0 0 10px var(--color-input-shadow);
 `
+
 const StyledP2 = styled.p`
   text-align: center;
   font-family: 'Inter', sans-serif;

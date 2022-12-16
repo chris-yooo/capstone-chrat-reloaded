@@ -201,7 +201,7 @@ const StyledLogoutButton = styled.button`
   padding: 10px;
   width: 140px;
   transition-duration: 0.4s;
-  background-color: var(--color-button-delete-red);
+  background-color: var(--color-button-darker-red);
   color: var(--color-text);
   border: none;
   font-size: 1rem;

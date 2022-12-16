@@ -12,10 +12,14 @@ body {
     --color-grey: rgb(128, 128, 128);
     --color-red: rgb(255, 0, 0);
     --color-blue: rgb(0, 0, 255);
+
     --color-green: rgb(0, 255, 0);
+
     --color-yellow: rgb(255, 255, 0);
 
-    --color-button-delete-red: rgb(152, 15, 15);
+    --color-button-darker-red: rgb(152, 15, 15);
+    --color-button-darker-green: rgb(0, 170, 0);
+    --color-button-darker-blue: rgb(0, 0, 200);
 }
 
 @media (prefers-color-scheme: dark) {
