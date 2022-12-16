@@ -12,6 +12,8 @@ export default function LoginPage(props: Props) {
     const [wouldLikeRegister, setWouldLikeRegister] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [messageStatus, setMessageStatus] = useState("");
 
     const login = () => {
         axios.get("/api/chrat-users/login", {
@@ -20,7 +22,23 @@ export default function LoginPage(props: Props) {
                 password
             }
         })
-            .then(props.fetchUsername)
+            .then((response) => response.status)
+            .then((status) => {
+                if (status === 200) {
+                    setMessageStatus("Erfolgreich eingeloggt");
+                    (setTimeout(() => {
+                        setMessageStatus("");
+                        props.fetchUsername()
+                    }, 1300));
+                }
+            })
+            .catch((error) => {
+                if (error.response.status === 401) {
+                    setError("Username oder Passwort Falsch");
+                    (setTimeout(() => setError(""), 5000));
+                }
+                console.log("Error =>" + error)
+            })
     }
 
     if (wouldLikeRegister) {
@@ -53,6 +71,8 @@ export default function LoginPage(props: Props) {
                 <StyledButton onClick={() => setWouldLikeRegister(true)}>Registrieren</StyledButton>
                 <StyledButton onClick={() => login()}>Anmelden</StyledButton>
             </StyledDivButton>
+            {error && <StyledErrorMessage>{error}</StyledErrorMessage>}
+            {messageStatus && <StyledMessage>{messageStatus}</StyledMessage>}
         </StyledMain>
     </>
 }
@@ -152,5 +172,27 @@ const StyledButton = styled.button`
 
   &:active {
     background-color: var(--color-button-active);
+  }
+`
+
+const StyledMessage = styled.p`
+  margin: 10px;
+  padding: 8px;
+  font-size: 1.2rem;
+  color: var(--color-text);
+  @media (max-width: 768px) {
+    margin: 10px 0 0 0;
+    padding: 0;
+  }
+`
+
+const StyledErrorMessage = styled.p`
+  margin: 10px;
+  padding: 8px;
+  font-size: 1.2rem;
+  color: var(--color-red);
+  @media (max-width: 768px) {
+    margin: 10px 0 0 0;
+    padding: 0;
   }
 `
